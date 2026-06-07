@@ -56,10 +56,10 @@ export default function Gallery({ addToCart }) {
           <span className="text-xs font-bold tracking-[0.3em] text-[#BCA58A] uppercase block mb-3">
             Social Showcase
           </span>
-          <h2 className="text-3xl md:text-5xl font-display font-medium text-[#111111] mb-6">
+          <h2 className="text-3xl md:text-5xl font-display font-medium text-[#FAF9F6] mb-6">
             Instagram Moments
           </h2>
-          <p className="text-[#686868] text-sm md:text-base max-w-xl mx-auto font-body">
+          <p className="text-[#6B6B6B] text-sm md:text-base max-w-xl mx-auto font-body">
             Follow our style journey on social media. Share your look with <span className="font-semibold text-[#BCA58A]">#SuiteEthnicWear</span>.
           </p>
         </div>
@@ -72,8 +72,8 @@ export default function Gallery({ addToCart }) {
               onClick={() => setFilter(cat)}
               className={`px-6 py-2 rounded-full font-semibold tracking-wider text-xs transition-all duration-300 cursor-pointer ${
                 filter === cat
-                  ? 'bg-[#111111] text-[#FAF9F6] shadow-sm'
-                  : 'border border-[#EBDDD0] text-[#686868] hover:border-[#111111] hover:text-[#111111]'
+                  ? 'bg-[#FAF9F6] text-[#111111] shadow-sm'
+                  : 'border border-[#1E1E1E] text-[#6B6B6B] hover:border-[#FAF9F6] hover:text-[#FAF9F6]'
               }`}
             >
               {cat}
@@ -96,7 +96,7 @@ export default function Gallery({ addToCart }) {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4 }}
                 onClick={() => setLightboxItem(item)}
-                className="aspect-square rounded-2xl overflow-hidden cursor-pointer bg-[#FAF9F6] relative group shadow-sm hover:shadow-premium"
+                className="aspect-square rounded-2xl overflow-hidden cursor-pointer bg-[#111111] relative group shadow-sm hover:shadow-premium"
               >
                 {/* Image */}
                 <img
@@ -121,7 +121,7 @@ export default function Gallery({ addToCart }) {
                 </div>
 
                 {/* Corner indicator */}
-                <span className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm p-1.5 rounded-lg text-[#111111] z-0 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                <span className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm p-1.5 rounded-lg text-[#FAF9F6] z-0 opacity-100 group-hover:opacity-0 transition-opacity duration-300">
                   <Instagram size={14} />
                 </span>
               </motion.div>
@@ -135,7 +135,7 @@ export default function Gallery({ addToCart }) {
             href="#"
             whileHover={{ scale: 1.05, boxShadow: '0 20px 40px rgba(188,165,138,0.2)' }}
             whileTap={{ scale: 0.95 }}
-            className="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#BCA58A] to-[#a69076] text-white px-8 py-3.5 rounded-xl text-xs font-semibold tracking-widest hover:shadow-premium transition-all duration-300"
+            className="inline-flex items-center gap-2.5 bg-gradient-to-r from-[#BCA58A] to-[#BCA58A] text-white px-8 py-3.5 rounded-xl text-xs font-semibold tracking-widest hover:shadow-premium transition-all duration-300"
           >
             <Instagram size={16} />
             FOLLOW @SUITEETHNICWEAR
@@ -171,7 +171,7 @@ export default function Gallery({ addToCart }) {
               </button>
 
               {/* Left Side: Campaign Photo */}
-              <div className="w-full md:w-1/2 aspect-square md:aspect-auto md:h-[500px] relative bg-[#FAF9F6]">
+              <div className="w-full md:w-1/2 aspect-square md:aspect-auto md:h-[500px] relative bg-[#111111]">
                 <img
                   src={lightboxItem.image}
                   alt="Campaign Instagram Look"
@@ -184,7 +184,7 @@ export default function Gallery({ addToCart }) {
                 <div className="space-y-5">
                   
                   {/* Insta Account Header */}
-                  <div className="flex items-center justify-between pb-4 border-b border-[#EBDDD0]/30">
+                  <div className="flex items-center justify-between pb-4 border-b border-[#1E1E1E]/30">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-full bg-[#BCA58A]/15 border border-[#BCA58A]/45 flex items-center justify-center font-display font-bold text-sm text-[#BCA58A]">
                         S
@@ -201,7 +201,7 @@ export default function Gallery({ addToCart }) {
 
                   {/* Caption */}
                   <div className="space-y-2">
-                    <p className="text-xs text-[#1E1E1E] leading-relaxed">
+                    <p className="text-xs text-[#E8DDD0] leading-relaxed">
                       <span className="font-bold mr-1.5">suiteethnicwear</span>
                       {lightboxItem.caption}
                     </p>
@@ -213,7 +213,7 @@ export default function Gallery({ addToCart }) {
                   {/* Stats */}
                   <div className="flex items-center gap-6 text-neutral-500 text-xs font-semibold pt-2">
                     <span className="flex items-center gap-1.5 text-neutral-900">
-                      <Heart size={14} className="fill-[#800020] text-[#800020]" />
+                      <Heart size={14} className="fill-[#FAF9F6] text-[#FAF9F6]" />
                       {lightboxItem.likes} likes
                     </span>
                     <span className="flex items-center gap-1.5">
@@ -226,10 +226,10 @@ export default function Gallery({ addToCart }) {
 
                 {/* Shoppable Widget Column */}
                 {matchedProduct && (
-                  <div className="pt-4 border-t border-[#EBDDD0]/40 mt-6 md:mt-0">
+                  <div className="pt-4 border-t border-[#1E1E1E]/40 mt-6 md:mt-0">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-[#BCA58A] block mb-2.5">SHOP THIS LOOK</span>
                     
-                    <div className="bg-[#FAF9F6] border border-[#EBDDD0]/50 rounded-xl p-3 flex items-center justify-between gap-4">
+                    <div className="bg-[#111111] border border-[#1E1E1E]/50 rounded-xl p-3 flex items-center justify-between gap-4">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-14 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
                           <img src={matchedProduct.image} alt={matchedProduct.name} className="w-full h-full object-cover object-top" />

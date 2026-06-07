@@ -8,21 +8,21 @@ export default {
     extend: {
       colors: {
         charcoal: {
-          DEFAULT: '#0C0C0E',
-          mid: '#141418',
-          soft: '#1C1C22',
+          DEFAULT: '#111111',
+          mid: '#111111',
+          soft: '#111111',
         },
         ivory: {
-          DEFAULT: '#FAF7F2',
-          soft: '#F2EDE6',
-          dim: '#E8E0D5',
+          DEFAULT: '#FAF9F6',
+          soft: '#E8DDD0',
+          dim: '#E8DDD0',
         },
         gold: {
-          DEFAULT: '#C9A96E',
-          light: '#DEC08A',
-          dark: '#A8863E',
+          DEFAULT: '#BCA58A',
+          light: '#BCA58A',
+          dark: '#BCA58A',
         },
-        crimson: '#8B1A3A',
+        crimson: '#BCA58A',
       },
       fontFamily: {
         display: ["'Cormorant Garamond'", 'serif'],

@@ -63,7 +63,7 @@ export default function SpecialOffer() {
   };
 
   return (
-    <section className="py-28 bg-[#111111] overflow-hidden relative text-left">
+    <section className="py-28 bg-[#FAF9F6] overflow-hidden relative text-left">
       
       {/* Background Graphic Lines */}
       <div className="absolute inset-0 opacity-15 pointer-events-none">
@@ -87,7 +87,7 @@ export default function SpecialOffer() {
               style={{ fontFamily: "'DM Sans', sans-serif" }}>
               Seasonal Promotion
             </span>
-            <h2 className="text-4xl md:text-5xl font-light text-[#FAF9F6] mb-5 leading-tight"
+            <h2 className="text-4xl md:text-5xl font-light text-[#111111] mb-5 leading-tight"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Summer Festive Edit<br />
               <em className="italic text-[#BCA58A]">Up to 40% Off</em>
@@ -102,7 +102,7 @@ export default function SpecialOffer() {
             <div className="flex gap-4 mb-10">
               {timerItems.map((item, index) => (
                 <div key={index} className="flex flex-col items-center">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-[#1E1E1E] border border-[#BCA58A]/20 flex items-center justify-center text-2xl md:text-3xl font-light text-[#FAF9F6] hover:border-[#BCA58A]/50 transition-all duration-300"
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-[#E8DDD0] border border-[#BCA58A]/20 flex items-center justify-center text-2xl md:text-3xl font-light text-[#111111] hover:border-[#BCA58A]/50 transition-all duration-300"
                     style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                     {formatNumber(item.value)}
                     <div className="absolute inset-0 bg-gradient-to-b from-[#BCA58A]/5 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -117,13 +117,13 @@ export default function SpecialOffer() {
 
             {/* Interactive Promo Coupon code */}
             <div className="mb-10 flex flex-wrap items-center gap-4">
-              <span className="text-xs tracking-wider text-white/70 font-semibold">USE DISCOUNT CODE:</span>
+              <span className="text-xs tracking-wider text-[#111111]/70 font-semibold">USE DISCOUNT CODE:</span>
               <button
                 onClick={handleCopyCode}
-                className="group relative bg-[#BCA58A]/10 hover:bg-[#BCA58A]/20 border border-dashed border-[#BCA58A] px-5 py-2.5 rounded-xl text-white font-mono font-bold tracking-widest text-sm flex items-center gap-2.5 transition-all duration-300"
+                className="group relative bg-[#BCA58A]/10 hover:bg-[#BCA58A]/20 border border-dashed border-[#BCA58A] px-5 py-2.5 rounded-xl text-[#111111] font-mono font-bold tracking-widest text-sm flex items-center gap-2.5 transition-all duration-300"
               >
                 <span>FESTIVE40</span>
-                {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} className="text-[#BCA58A] group-hover:text-white" />}
+                {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-[#BCA58A] group-hover:text-[#111111]" />}
                 
                 {/* Floating tooltip */}
                 <AnimatePresence>
@@ -144,7 +144,7 @@ export default function SpecialOffer() {
             <motion.button
               whileHover={{ scale: 1.03, boxShadow: '0 20px 40px rgba(188,165,138,0.2)' }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-3 bg-[#BCA58A] hover:bg-[#BCA58A] text-[#111111] px-10 py-4 tracking-[0.25em] text-[10px] font-bold transition-colors group cursor-pointer"
+              className="inline-flex items-center gap-3 bg-[#BCA58A] hover:bg-[#BCA58A] text-[#FAF9F6] px-10 py-4 tracking-[0.25em] text-[10px] font-bold transition-colors group cursor-pointer"
               style={{ fontFamily: "'DM Sans', sans-serif" }}
             >
               SHOP THE SALE
@@ -161,7 +161,7 @@ export default function SpecialOffer() {
             className="relative justify-self-center lg:justify-self-end w-full max-w-md"
           >
             {/* Elegant Fabric Pattern Photo */}
-            <div className="aspect-[4/3] overflow-hidden bg-[#111111] relative border border-[#BCA58A]/15 group">
+            <div className="aspect-[4/3] overflow-hidden bg-[#FAF9F6] relative border border-[#BCA58A]/15 group">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={activeFabric}
@@ -203,7 +203,7 @@ export default function SpecialOffer() {
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-              className="absolute -bottom-6 -left-6 bg-white border border-[#EBDDD0] p-5 rounded-2xl shadow-premium text-left max-w-[180px] hidden sm:block"
+              className="absolute -bottom-6 -left-6 bg-white border border-[#111111]/10 p-5 rounded-2xl shadow-xl text-left max-w-[180px] hidden sm:block"
             >
               <span className="text-[9px] font-bold text-[#BCA58A] tracking-widest uppercase block mb-1">
                 Special Offer

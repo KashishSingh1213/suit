@@ -33,7 +33,7 @@ export default function WhyChooseUs() {
   const [expandedIndex, setExpandedIndex] = useState(0);
 
   return (
-    <section className="py-28 bg-[#111111] relative overflow-hidden border-t border-[#BCA58A]/10">
+    <section className="py-28 bg-[#FAF9F6] relative overflow-hidden border-t border-[#BCA58A]/10">
       <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(circle_at_1px_1px,#BCA58A_1px,transparent_0)] bg-[size:32px_32px] pointer-events-none" />
 
       <div className="max-w-[1400px] mx-auto px-6 md:px-14 relative z-10">
@@ -43,7 +43,7 @@ export default function WhyChooseUs() {
           <div className="lg:sticky lg:top-32 text-left">
             <span className="text-[10px] tracking-[0.35em] text-[#BCA58A] uppercase block mb-4 font-medium"
               style={{ fontFamily: "'DM Sans', sans-serif" }}>Our Promise</span>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#FAF9F6] leading-tight mb-8"
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-[#111111] leading-tight mb-8"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Crafting <em className="italic text-[#BCA58A]">Luxury</em><br/>Experiences
             </h2>
@@ -54,7 +54,7 @@ export default function WhyChooseUs() {
             </p>
             
             {/* Decorative Image */}
-            <div className="mt-12 aspect-[4/3] w-full max-w-sm overflow-hidden bg-[#1E1E1E]">
+            <div className="mt-12 aspect-[4/3] w-full max-w-sm overflow-hidden bg-[#E8DDD0]">
               <img src="/hero_campaign_palace.png" alt="Craftsmanship" className="w-full h-full object-cover opacity-70 hover:opacity-100 transition-opacity duration-500" />
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function WhyChooseUs() {
                       <feature.icon size={24} strokeWidth={1.5} />
                     </div>
                     <div className="flex-1">
-                      <h3 className={`text-2xl font-medium mb-2 transition-colors duration-300 ${isExpanded ? 'text-[#FAF9F6]' : 'text-[#FAF9F6]/60 group-hover:text-[#FAF9F6]'}`}
+                      <h3 className={`text-2xl font-medium mb-2 transition-colors duration-300 ${isExpanded ? 'text-[#111111]' : 'text-[#111111]/60 group-hover:text-[#111111]'}`}
                         style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                         {feature.title}
                       </h3>

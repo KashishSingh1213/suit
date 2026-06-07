@@ -36,10 +36,10 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
   const tabs = ['Trending', 'New Arrivals', 'Best Sellers', 'Festive Edit'];
 
   return (
-    <section className="py-28 bg-[#111111] relative overflow-hidden">
+    <section className="py-28 bg-[#FAF9F6] relative overflow-hidden">
       {/* Ambient glow */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#BCA58A]/4 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#111111]/4 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-[#FAF9F6]/4 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-[1600px] mx-auto px-6 md:px-14 relative z-10">
 
@@ -50,7 +50,7 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
             style={{ fontFamily: "'DM Sans', sans-serif" }}>Handpicked Curation</span>
           <div className="flex items-center justify-center gap-5 mb-5">
             <div className="h-px w-12 bg-[#BCA58A]/30" />
-            <h2 className="text-4xl md:text-6xl font-light text-[#FAF9F6]"
+            <h2 className="text-4xl md:text-6xl font-light text-[#111111]"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Trending &amp; <em className="italic text-[#BCA58A]">Festive Wear</em>
             </h2>
@@ -68,7 +68,7 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
             {tabs.map((tab) => (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`pb-4 text-[10px] md:text-[11px] font-semibold tracking-[0.2em] transition-all duration-300 relative uppercase cursor-pointer ${
-                  activeTab === tab ? 'text-[#FAF9F6]' : 'text-[#6B6B6B] hover:text-[#FAF9F6]/70'
+                  activeTab === tab ? 'text-[#111111]' : 'text-[#6B6B6B] hover:text-[#111111]/70'
                 }`} style={{ fontFamily: "'DM Sans', sans-serif" }}>
                 {tab}
                 {activeTab === tab && (
@@ -94,12 +94,12 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
                 className="group relative text-left cursor-pointer">
 
                 {/* Image */}
-                <div className="aspect-[3/4] overflow-hidden relative bg-[#111111] mb-5 border border-[#BCA58A]/8 group-hover:border-[#BCA58A]/30 transition-colors duration-500">
+                <div className="aspect-[3/4] overflow-hidden relative bg-[#FAF9F6] mb-5 border border-[#BCA58A]/8 group-hover:border-[#BCA58A]/30 transition-colors duration-500">
                   <img src={product.image} alt={product.name}
                     className="w-full h-full object-cover transform scale-100 group-hover:scale-108 transition-transform duration-700" />
 
                   {/* Badge */}
-                  <span className="absolute top-3 left-3 bg-[#111111]/85 backdrop-blur-sm text-[#BCA58A] text-[8px] font-semibold tracking-[0.15em] uppercase px-2.5 py-1.5 border border-[#BCA58A]/25">
+                  <span className="absolute top-3 left-3 bg-[#FAF9F6]/85 backdrop-blur-sm text-[#BCA58A] text-[8px] font-semibold tracking-[0.15em] uppercase px-2.5 py-1.5 border border-[#BCA58A]/25">
                     {product.badge}
                   </span>
 
@@ -108,23 +108,23 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
                     onClick={(e) => { e.stopPropagation(); toggleFavorite(product.id); }}
                     className={`absolute top-3 right-3 p-2 backdrop-blur-md border transition-colors duration-300 z-20 cursor-pointer ${
                       favorites[product.id]
-                        ? 'bg-[#111111] text-white border-transparent'
-                        : 'bg-[#111111]/70 text-[#FAF9F6]/70 border-[#FAF9F6]/15 hover:border-[#BCA58A] hover:text-[#BCA58A]'
+                        ? 'bg-[#FAF9F6] text-white border-transparent'
+                        : 'bg-[#FAF9F6]/70 text-[#111111]/70 border-[#111111]/15 hover:border-[#BCA58A] hover:text-[#BCA58A]'
                     }`}>
                     <Heart size={14} className={favorites[product.id] ? 'fill-current' : ''} />
                   </motion.button>
 
                   {/* Hover overlay */}
-                  <div className="absolute inset-0 bg-[#111111]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4 z-10">
+                  <div className="absolute inset-0 bg-[#FAF9F6]/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center p-4 z-10">
                     <div className="w-full flex gap-2">
                       <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                         onClick={(e) => { e.stopPropagation(); addToCart(product, 'M'); }}
-                        className="flex-1 bg-[#BCA58A] text-[#111111] text-[9px] font-bold tracking-[0.2em] uppercase py-3 flex items-center justify-center gap-1.5 hover:bg-[#BCA58A] transition-colors cursor-pointer">
+                        className="flex-1 bg-[#BCA58A] text-[#FAF9F6] text-[9px] font-bold tracking-[0.2em] uppercase py-3 flex items-center justify-center gap-1.5 hover:bg-[#BCA58A] transition-colors cursor-pointer">
                         <ShoppingBag size={11} /> ADD TO BAG
                       </motion.button>
                       <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                         onClick={(e) => { e.stopPropagation(); setQuickViewProduct(product); }}
-                        className="bg-[#FAF9F6]/10 border border-[#FAF9F6]/20 text-[#FAF9F6] hover:bg-[#FAF9F6] hover:text-[#111111] p-3 transition-colors cursor-pointer">
+                        className="bg-[#111111]/10 border border-[#111111]/20 text-[#111111] hover:bg-[#111111] hover:text-[#FAF9F6] p-3 transition-colors cursor-pointer">
                         <Eye size={12} />
                       </motion.button>
                     </div>
@@ -136,7 +136,7 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
                   <span className="inline-block text-[#BCA58A] text-[8px] font-semibold tracking-[0.15em] uppercase border border-[#BCA58A]/25 px-2 py-0.5">
                     ✓ {product.boutique}
                   </span>
-                  <h3 className="text-sm font-medium text-[#FAF9F6]/85 group-hover:text-[#FAF9F6] transition-colors duration-300 leading-snug"
+                  <h3 className="text-sm font-medium text-[#111111]/85 group-hover:text-[#111111] transition-colors duration-300 leading-snug"
                     style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: '15px' }}>
                     {product.name}
                   </h3>
@@ -154,7 +154,7 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ delay: 0.4 }}
           viewport={{ once: true }} className="flex justify-center mt-16">
           <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-            className="border border-[#BCA58A]/50 text-[#BCA58A] hover:bg-[#BCA58A] hover:text-[#111111] px-12 py-3.5 tracking-[0.25em] text-[10px] font-semibold transition-all duration-300 cursor-pointer"
+            className="border border-[#BCA58A]/50 text-[#BCA58A] hover:bg-[#BCA58A] hover:text-[#FAF9F6] px-12 py-3.5 tracking-[0.25em] text-[10px] font-semibold transition-all duration-300 cursor-pointer"
             style={{ fontFamily: "'DM Sans', sans-serif" }}>
             VIEW ALL COLLECTIONS
           </motion.button>
@@ -170,17 +170,17 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
             <motion.div initial={{ scale: 0.95, y: 24 }} animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: 24 }} transition={{ type: 'spring', duration: 0.5 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-4xl bg-[#111111] border border-[#BCA58A]/15 overflow-hidden shadow-2xl flex flex-col md:flex-row relative max-h-[90vh] overflow-y-auto md:overflow-visible">
+              className="w-full max-w-4xl bg-[#FAF9F6] border border-[#BCA58A]/15 overflow-hidden shadow-2xl flex flex-col md:flex-row relative max-h-[90vh] overflow-y-auto md:overflow-visible">
 
               <button onClick={() => setQuickViewProduct(null)}
-                className="absolute top-4 right-4 p-2 border border-[#BCA58A]/20 hover:border-[#BCA58A] text-[#6B6B6B] hover:text-[#FAF9F6] transition-colors z-10 cursor-pointer">
+                className="absolute top-4 right-4 p-2 border border-[#BCA58A]/20 hover:border-[#BCA58A] text-[#6B6B6B] hover:text-[#111111] transition-colors z-10 cursor-pointer">
                 <X size={16} />
               </button>
 
-              <div className="w-full md:w-1/2 aspect-[3/4] md:aspect-auto md:h-[560px] relative bg-[#111111]">
+              <div className="w-full md:w-1/2 aspect-[3/4] md:aspect-auto md:h-[560px] relative bg-[#FAF9F6]">
                 <img src={quickViewProduct.image} alt={quickViewProduct.name}
                   className="w-full h-full object-cover object-top" />
-                <span className="absolute top-4 left-4 bg-[#BCA58A] text-[#111111] text-[8px] font-bold tracking-[0.15em] px-3 py-1.5 uppercase shadow-sm">
+                <span className="absolute top-4 left-4 bg-[#BCA58A] text-[#FAF9F6] text-[8px] font-bold tracking-[0.15em] px-3 py-1.5 uppercase shadow-sm">
                   {quickViewProduct.badge}
                 </span>
               </div>
@@ -198,7 +198,7 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
                   </div>
 
                   <div>
-                    <h3 className="text-2xl font-light text-[#FAF9F6] leading-tight mb-2"
+                    <h3 className="text-2xl font-light text-[#111111] leading-tight mb-2"
                       style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                       {quickViewProduct.name}
                     </h3>
@@ -223,7 +223,7 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
                         <button key={size} onClick={() => setSelectedSize(size)}
                           className={`px-4 py-2 text-[9px] font-semibold tracking-wider border transition-all duration-200 cursor-pointer ${
                             selectedSize === size
-                              ? 'border-[#BCA58A] bg-[#BCA58A] text-[#111111]'
+                              ? 'border-[#BCA58A] bg-[#BCA58A] text-[#FAF9F6]'
                               : 'border-[#BCA58A]/20 text-[#6B6B6B] hover:border-[#BCA58A] hover:text-[#BCA58A]'
                           }`} style={{ fontFamily: "'DM Sans', sans-serif" }}>
                           {size}
@@ -243,14 +243,14 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
 
                 <div className="flex gap-3 pt-6 border-t border-[#BCA58A]/12 mt-6 md:mt-0">
                   <button onClick={() => { addToCart(quickViewProduct, selectedSize); setQuickViewProduct(null); }}
-                    className="flex-1 bg-[#BCA58A] hover:bg-[#BCA58A] text-[#111111] py-4 text-[10px] font-bold tracking-[0.25em] flex items-center justify-center gap-2 transition-all shadow-lg cursor-pointer uppercase"
+                    className="flex-1 bg-[#BCA58A] hover:bg-[#BCA58A] text-[#FAF9F6] py-4 text-[10px] font-bold tracking-[0.25em] flex items-center justify-center gap-2 transition-all shadow-lg cursor-pointer uppercase"
                     style={{ fontFamily: "'DM Sans', sans-serif" }}>
                     <ShoppingBag size={13} /> ADD TO BAG
                   </button>
                   <button onClick={() => toggleFavorite(quickViewProduct.id)}
                     className={`p-4 border transition-colors cursor-pointer ${
                       favorites[quickViewProduct.id]
-                        ? 'bg-[#111111] text-white border-transparent'
+                        ? 'bg-[#FAF9F6] text-white border-transparent'
                         : 'border-[#BCA58A]/20 text-[#6B6B6B] hover:border-[#BCA58A] hover:text-[#BCA58A]'
                     }`}>
                     <Heart size={15} className={favorites[quickViewProduct.id] ? 'fill-current' : ''} />

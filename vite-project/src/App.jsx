@@ -3,9 +3,10 @@ import './App.css'
 import LoadingScreen from './LoadingScreen'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
-import StackedCategories from './components/StackedCategories'
+import MasonryGallery from './components/MasonryGallery'
 import InteractiveLookbook from './components/InteractiveLookbook'
 import ScrollytellingCraft from './components/ScrollytellingCraft'
+import FabricMagnifier from './components/FabricMagnifier'
 import Testimonials from './components/Testimonials'
 import SpecialOffer from './components/SpecialOffer'
 import Footer from './components/Footer'
@@ -61,7 +62,7 @@ function App() {
   if (!loadingComplete) return <LoadingScreen onComplete={handleLoadComplete} />
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A]" style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.8s ease' }}>
+    <div className="min-h-screen bg-[#FAF9F6]" style={{ opacity: contentVisible ? 1 : 0, transition: 'opacity 0.8s ease' }}>
       <Navbar 
         cart={cart} 
         removeFromCart={removeFromCart} 
@@ -71,8 +72,9 @@ function App() {
         addToCart={addToCart}
       />
       <Hero addToCart={addToCart} />
-      <StackedCategories />
+      <MasonryGallery />
       <ScrollytellingCraft />
+      <FabricMagnifier />
       <InteractiveLookbook addToCart={addToCart} />
       <Testimonials />
       <SpecialOffer />

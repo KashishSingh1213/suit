@@ -58,7 +58,7 @@ export default function LoadingScreen({ onComplete }) {
         <div style={{position:'absolute',top:'100%',transform:'translateY(-90px)',width:'100%'}}>{renderSvgText()}</div>
       </div>
       <div ref={bottomRef} className="absolute bottom-0 left-0 w-full h-[50vh] overflow-hidden flex justify-center" style={{background:'#111111'}}>
-        <div style={{position:'absolute',top:0,left:0,width:'100%'}}>{renderSmoke()}</div>
+        <div style={{position:'absolute',bottom:'100%',left:0,width:'100%'}}>{renderSmoke()}</div>
         <div style={{position:'absolute',top:0,transform:'translateY(-90px)',width:'100%'}}>{renderSvgText()}</div>
       </div>
     </div>

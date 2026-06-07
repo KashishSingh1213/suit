@@ -42,14 +42,14 @@ export default function Testimonials() {
   }, []);
 
   return (
-    <section className="py-24 bg-[#111111] relative overflow-hidden border-t border-[#BCA58A]/10">
+    <section className="py-24 bg-[#FAF9F6] relative overflow-hidden border-t border-[#BCA58A]/10">
       <div className="max-w-[1000px] mx-auto px-6 md:px-14 relative z-10 flex flex-col md:flex-row items-center gap-12 md:gap-24">
 
         {/* Left Intro */}
         <div className="w-full md:w-1/3 text-center md:text-left">
           <span className="text-[10px] tracking-[0.35em] text-[#BCA58A] uppercase block mb-4 font-medium"
             style={{ fontFamily: "'DM Sans', sans-serif" }}>Testimonials</span>
-          <h2 className="text-4xl md:text-5xl font-light text-[#FAF9F6] mb-6"
+          <h2 className="text-4xl md:text-5xl font-light text-[#111111] mb-6"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             Client <em className="italic text-[#BCA58A]">Stories</em>
           </h2>
@@ -81,7 +81,7 @@ export default function Testimonials() {
               </div>
 
               {/* Quote text */}
-              <blockquote className="text-xl md:text-3xl font-light italic text-[#FAF9F6]/90 leading-relaxed"
+              <blockquote className="text-xl md:text-3xl font-light italic text-[#111111]/90 leading-relaxed"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 "{testimonials[current].text}"
               </blockquote>
@@ -93,7 +93,7 @@ export default function Testimonials() {
                     className="w-full h-full object-cover" />
                 </div>
                 <div className="text-left">
-                  <h4 className="text-base font-medium text-[#FAF9F6]"
+                  <h4 className="text-base font-medium text-[#111111]"
                     style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                     {testimonials[current].name}
                   </h4>

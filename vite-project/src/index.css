@@ -2,17 +2,17 @@
 
 /* ─── DESIGN TOKENS ─── */
 :root {
-  --charcoal:     #111111;
-  --charcoal-mid: #111111;
-  --charcoal-soft:#1E1E1E;
-  --ivory:        #FAF9F6;
-  --ivory-soft:   #E8DDD0;
-  --ivory-dim:    #E8DDD0;
+  --charcoal:     #FAF9F6;
+  --charcoal-mid: #FAF9F6;
+  --charcoal-soft:#E8DDD0;
+  --ivory:        #111111;
+  --ivory-soft:   #1E1E1E;
+  --ivory-dim:    #1E1E1E;
   --gold:         #BCA58A;
   --gold-light:   #BCA58A;
   --gold-dark:    #BCA58A;
-  --crimson:      #111111;
-  --text-dark:    #1E1E1E;
+  --crimson:      #FAF9F6;
+  --text-dark:    #E8DDD0;
   --text-mid:     #6B6B6B;
   --text-muted:   #6B6B6B;
   --font-display: 'Cormorant Garamond', serif;

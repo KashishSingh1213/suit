@@ -33,7 +33,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#111111] text-[#FAF9F6] border-t border-[#BCA58A]/10">
+    <footer className="bg-[#FAF9F6] text-[#111111] border-t border-[#BCA58A]/10">
 
       {/* Newsletter */}
       <div className="border-b border-[#BCA58A]/10">
@@ -44,7 +44,7 @@ export default function Footer() {
             <div className="text-left">
               <span className="text-[9px] tracking-[0.3em] text-[#BCA58A] uppercase block mb-3 font-medium"
                 style={{ fontFamily: "'DM Sans', sans-serif" }}>Stay Connected</span>
-              <h3 className="text-3xl md:text-4xl font-light text-[#FAF9F6] mb-2"
+              <h3 className="text-3xl md:text-4xl font-light text-[#111111] mb-2"
                 style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 Join the <em className="italic text-[#BCA58A]">Inner Circle</em>
               </h3>
@@ -58,10 +58,10 @@ export default function Footer() {
                 <div className="flex gap-3">
                   <input type="email" placeholder="Your email address"
                     value={email} onChange={(e) => setEmail(e.target.value)}
-                    className="flex-1 bg-[#111111] border border-[#BCA58A]/20 text-[#FAF9F6] placeholder-[#6B6B6B] px-5 py-3.5 text-sm focus:outline-none focus:border-[#BCA58A] transition-colors"
+                    className="flex-1 bg-[#FAF9F6] border border-[#BCA58A]/20 text-[#111111] placeholder-[#6B6B6B] px-5 py-3.5 text-sm focus:outline-none focus:border-[#BCA58A] transition-colors"
                     style={{ fontFamily: "'DM Sans', sans-serif" }} />
                   <motion.button type="submit" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    className="bg-[#BCA58A] hover:bg-[#BCA58A] text-[#111111] px-8 py-3.5 text-[10px] font-bold tracking-[0.2em] transition-colors cursor-pointer"
+                    className="bg-[#BCA58A] hover:bg-[#BCA58A] text-[#FAF9F6] px-8 py-3.5 text-[10px] font-bold tracking-[0.2em] transition-colors cursor-pointer"
                     style={{ fontFamily: "'DM Sans', sans-serif" }}>
                     SUBSCRIBE
                   </motion.button>
