@@ -18,7 +18,7 @@ const Linkedin = ({ size }) => (
   </svg>
 );
 
-export default function Footer() {
+export default function Footer({ setView }) {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const [error, setError] = useState('');
@@ -82,7 +82,7 @@ export default function Footer() {
           {/* Brand */}
           <motion.div initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }} viewport={{ once: true }} className="space-y-4 lg:col-span-1">
-            <div>
+            <div className="cursor-pointer" onClick={() => setView && setView('home')}>
               <img src={gurnaazLogo} alt="GURNAAZ" className="h-16 w-auto object-contain" />
             </div>
             <div className="w-8 h-px bg-[#BCA58A]/30" />

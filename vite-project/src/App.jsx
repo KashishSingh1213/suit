@@ -10,16 +10,32 @@ import FabricMagnifier from './components/FabricMagnifier'
 import Testimonials from './components/Testimonials'
 import SpecialOffer from './components/SpecialOffer'
 import Footer from './components/Footer'
+import CartPage from './components/CartPage'
+import CheckoutPage from './components/CheckoutPage'
+import LoginPage from './components/LoginPage'
 
 function App() {
   const [loadingComplete, setLoadingComplete] = useState(false)
   const [contentVisible, setContentVisible] = useState(false)
   const [cart, setCart] = useState([])
   const [favorites, setFavorites] = useState({})
+  const [view, setView] = useState('home')
+  const [user, setUser] = useState(null)
 
   const handleLoadComplete = () => {
     setLoadingComplete(true)
     setTimeout(() => setContentVisible(true), 200)
+  }
+
+  const handleLoginSuccess = (userProfile) => {
+    setUser(userProfile)
+    setView('home')
+  }
+
+  const handleLogout = () => {
+    setUser(null)
+    setView('home')
+    alert('Logged out successfully.')
   }
 
   const addToCart = (product, size = 'M') => {
@@ -59,6 +75,8 @@ function App() {
     setFavorites((prev) => ({ ...prev, [productId]: !prev[productId] }))
   }
 
+  const clearCart = () => setCart([])
+
   if (!loadingComplete) return <LoadingScreen onComplete={handleLoadComplete} />
 
   return (
@@ -70,15 +88,48 @@ function App() {
         favorites={favorites}
         toggleFavorite={toggleFavorite}
         addToCart={addToCart}
+        setView={setView}
+        user={user}
+        handleLogout={handleLogout}
       />
-      <Hero addToCart={addToCart} />
-      <MasonryGallery />
-      <ScrollytellingCraft />
-      <FabricMagnifier />
-      <InteractiveLookbook addToCart={addToCart} />
-      <Testimonials />
-      <SpecialOffer />
-      <Footer />
+      
+      {view === 'home' && (
+        <>
+          <Hero addToCart={addToCart} />
+          <MasonryGallery />
+          <ScrollytellingCraft />
+          <FabricMagnifier />
+          <InteractiveLookbook addToCart={addToCart} />
+          <Testimonials />
+          <SpecialOffer />
+        </>
+      )}
+
+      {view === 'cart' && (
+        <CartPage 
+          cart={cart}
+          updateCartQty={updateCartQty}
+          removeFromCart={removeFromCart}
+          setView={setView}
+        />
+      )}
+
+      {view === 'checkout' && (
+        <CheckoutPage 
+          cart={cart}
+          setView={setView}
+          clearCart={clearCart}
+        />
+      )}
+
+      {view === 'login' && (
+        <LoginPage 
+          setView={setView}
+          onLoginSuccess={handleLoginSuccess}
+        />
+      )}
+
+      <Footer setView={setView} />
     </div>
   )
 }

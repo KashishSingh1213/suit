@@ -22,13 +22,15 @@ const allProductsLookup = [
   { id: 'f4', name: 'Heavy Zardozi Salwar Suit Set', price: '₹12,499', image: '/designer_suit_1.png', boutique: 'Lakhnavi Shaan' },
 ];
 
-export default function Navbar({ cart = [], removeFromCart, updateCartQty, favorites = {}, toggleFavorite, addToCart }) {
+export default function Navbar({ cart = [], removeFromCart, updateCartQty, favorites = {}, toggleFavorite, addToCart, setView, user, handleLogout }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [cartOpen, setCartOpen] = useState(false);
   const [wishlistOpen, setWishlistOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [orderId, setOrderId] = useState('');
   const [timeLeft, setTimeLeft] = useState({ hours: 1, minutes: 24, seconds: 53 });
 
   useEffect(() => {
@@ -60,8 +62,10 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
   }, 0);
 
   const handleCheckout = () => {
-    alert(`Thank you! Proceeding to secure payment of ₹${getSubtotal().toLocaleString()} with your items.`);
+    const randomId = 'GN-' + Math.floor(100000 + Math.random() * 900000);
+    setOrderId(randomId);
     setCartOpen(false);
+    setCheckoutOpen(true);
   };
 
   return (
@@ -90,14 +94,14 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
           <div className="flex items-center justify-between">
 
             {/* Logo */}
-            <motion.a href="#" whileHover={{ scale: 1.02 }} className="flex items-center gap-2 cursor-pointer group">
+            <motion.a href="#" onClick={(e) => { e.preventDefault(); setView('home'); }} whileHover={{ scale: 1.02 }} className="flex items-center gap-2 cursor-pointer group">
               <img src={gurnaazLogo} alt="GURNAAZ" className="h-12 md:h-14 w-auto object-contain" />
             </motion.a>
 
             {/* Center Nav Links */}
             <div className="hidden md:flex items-center gap-10">
               {['HOME', 'SHOP', 'COLLECTIONS', 'BOUTIQUES', 'ABOUT US'].map((item, i) => (
-                <a key={i} href="#"
+                <a key={i} href="#" onClick={(e) => { e.preventDefault(); setView('home'); }}
                   className="relative text-[11px] tracking-[0.18em] text-[#111111]/70 hover:text-[#111111] transition-colors duration-300 py-2 group"
                   style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
                 >
@@ -115,10 +119,32 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
                 <Search size={18} />
               </motion.button>
 
-              <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
-                className="text-[#111111]/70 hover:text-[#BCA58A] transition-colors cursor-pointer">
-                <User size={18} />
-              </motion.button>
+              {user ? (
+                <div className="flex items-center gap-3 relative">
+                  <span className="text-[10px] tracking-wider font-bold text-[#BCA58A] uppercase hidden sm:block">
+                    Hi, {user.name.split(' ')[0]}
+                  </span>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }} 
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleLogout}
+                    title="Log Out"
+                    className="text-[10px] text-rose-500 hover:text-rose-700 tracking-wider font-bold uppercase cursor-pointer"
+                  >
+                    Logout
+                  </motion.button>
+                </div>
+              ) : (
+                <motion.button 
+                  whileHover={{ scale: 1.1 }} 
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setView('login')}
+                  className="text-[#111111]/70 hover:text-[#BCA58A] transition-colors cursor-pointer"
+                  title="Login / Register"
+                >
+                  <User size={18} />
+                </motion.button>
+              )}
 
               <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
                 onClick={() => setWishlistOpen(true)}
@@ -133,7 +159,7 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
               </motion.button>
 
               <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
-                onClick={() => setCartOpen(true)}
+                onClick={() => setView('cart')}
                 className="text-[#111111]/70 hover:text-[#BCA58A] transition-colors relative cursor-pointer">
                 <ShoppingBag size={18} />
                 {cartItemCount > 0 && (
@@ -348,6 +374,76 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
                 </div>
               </motion.div>
             </div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Checkout QR Code Modal */}
+      <AnimatePresence>
+        {checkoutOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
+              onClick={() => setCheckoutOpen(false)} 
+              className="absolute inset-0 bg-black/75 backdrop-blur-sm cursor-pointer" 
+            />
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0 }} 
+              animate={{ scale: 1, opacity: 1 }} 
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative bg-[#FAF9F6] border border-[#BCA58A]/30 p-8 md:p-10 max-w-md w-full shadow-2xl z-10 text-center"
+            >
+              <button 
+                onClick={() => setCheckoutOpen(false)} 
+                className="absolute top-4 right-4 text-[#6B6B6B] hover:text-[#111111] cursor-pointer"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="flex flex-col items-center gap-4">
+                <span className="text-[9px] tracking-[0.3em] text-[#BCA58A] uppercase font-bold">Secure Payment</span>
+                <h3 className="text-3xl font-light text-[#111111]" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                  Complete Your Order
+                </h3>
+                <div className="w-12 h-px bg-[#BCA58A]/30 my-2" />
+                
+                <p className="text-xs text-[#6B6B6B] leading-relaxed mb-4">
+                  Please scan the Google Pay UPI QR code below to complete the payment for your premium Gurnaaz order.
+                </p>
+
+                {/* QR Code Container */}
+                <div className="w-48 h-48 bg-white border border-[#BCA58A]/20 p-2 shadow-inner flex items-center justify-center rounded">
+                  <img src="/gpay_qr_code.png" alt="Google Pay QR Code" className="w-full h-full object-contain" />
+                </div>
+
+                {/* Details */}
+                <div className="w-full bg-[#E8DDD0]/40 p-4 border border-[#BCA58A]/10 mt-2 space-y-2 text-left">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#6B6B6B] uppercase tracking-wider font-semibold">Order ID:</span>
+                    <span className="font-bold text-[#111111]">{orderId}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-[#6B6B6B] uppercase tracking-wider font-semibold">Total Amount:</span>
+                    <span className="font-bold text-[#BCA58A]">₹{getSubtotal().toLocaleString()}</span>
+                  </div>
+                </div>
+
+                {/* Instructions */}
+                <div className="bg-[#BCA58A]/10 border-l-2 border-[#BCA58A] p-4 text-left w-full mt-4">
+                  <p className="text-[11px] text-[#111111] leading-relaxed">
+                    <strong>Step 1:</strong> Scan the QR code above and pay the exact amount.
+                  </p>
+                  <p className="text-[11px] text-[#111111] leading-relaxed mt-1.5">
+                    <strong>Step 2:</strong> Send the payment receipt screenshot to WhatsApp: <a href="https://wa.me/919877275894" target="_blank" rel="noopener noreferrer" className="underline hover:text-[#BCA58A] font-bold text-[#111111]">+91 9877275894</a> along with your <strong>Order ID</strong>.
+                  </p>
+                  <p className="text-[11px] text-[#6B6B6B] leading-relaxed mt-1.5">
+                    Once verified, we will place your order and share shipping/tracking updates.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
           </div>
         )}
       </AnimatePresence>
