@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Lock, User, Mail } from 'lucide-react';
+import { saveUserData } from '../firebase';
+import { sendBrevoOtp } from '../brevo';
 
 export default function LoginPage({ setView, onLoginSuccess }) {
   const [isRegister, setIsRegister] = useState(false);
@@ -10,6 +12,7 @@ export default function LoginPage({ setView, onLoginSuccess }) {
   const [loginEmail, setLoginEmail] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otpCode, setOtpCode] = useState('');
+  const [generatedOtp, setGeneratedOtp] = useState('1234');
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(30);
 
@@ -28,7 +31,9 @@ export default function LoginPage({ setView, onLoginSuccess }) {
             phone: verifiedPhone,
             email: isRegister ? email : 'member@gurnaaz.com',
           };
-          onLoginSuccess(userProfile);
+          saveUserData(userProfile).then(() => {
+            onLoginSuccess(userProfile);
+          });
         })
         .catch((err) => {
           console.error("Error fetching user data from user_json_url", err);
@@ -38,7 +43,9 @@ export default function LoginPage({ setView, onLoginSuccess }) {
             phone: 'Verified Phone',
             email: isRegister ? email : 'member@gurnaaz.com',
           };
-          onLoginSuccess(userProfile);
+          saveUserData(userProfile).then(() => {
+            onLoginSuccess(userProfile);
+          });
         })
         .finally(() => {
           setLoading(false);
@@ -81,19 +88,28 @@ export default function LoginPage({ setView, onLoginSuccess }) {
       alert('Please enter a valid email address.');
       return;
     }
+    
+    // Generate a random 4-digit code
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    setGeneratedOtp(code);
     setLoading(true);
-    setTimeout(() => {
+
+    sendBrevoOtp(loginEmail, code).then((sentSuccessfully) => {
       setLoading(false);
       setOtpSent(true);
       setTimer(30);
-      alert(`OTP sent to ${loginEmail}! For testing, use code: 1234`);
-    }, 1200);
+      if (sentSuccessfully) {
+        alert(`Verification OTP code sent to your email address!`);
+      } else {
+        alert(`[Brevo Demo Mode] OTP sent to email! For testing, use code: ${code}`);
+      }
+    });
   };
 
   const handleVerifyOtp = (e) => {
     e.preventDefault();
-    if (otpCode !== '1234') {
-      alert('Invalid OTP. Please enter 1234.');
+    if (otpCode !== generatedOtp) {
+      alert(`Invalid OTP. Please enter ${generatedOtp}.`);
       return;
     }
     setLoading(true);
@@ -104,7 +120,9 @@ export default function LoginPage({ setView, onLoginSuccess }) {
         phone: 'Linked Phone',
         email: loginEmail,
       };
-      onLoginSuccess(userProfile);
+      saveUserData(userProfile).then(() => {
+        onLoginSuccess(userProfile);
+      });
     }, 1500);
   };
 
