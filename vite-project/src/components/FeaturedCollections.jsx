@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ShoppingBag, Eye, X, Star, Check } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getProducts } from '../utils/adminStore';
 
-const products = {
+const staticProducts = {
   Trending: [
     { id: 't1', name: 'Embroidered Silk Suit Set', price: '₹4,299', image: '/designer_suit_1.png', boutique: 'Kala Mandir', badge: 'Silk Blend' },
     { id: 't2', name: 'Chanderi Salwar Suit Set', price: '₹3,899', image: '/cotton_suit.png', boutique: 'Zari Heritage', badge: 'Handloom' },
@@ -33,7 +34,35 @@ export default function FeaturedCollections({ cart = [], addToCart, favorites = 
   const [activeTab, setActiveTab] = useState('Trending');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState('M');
+  const [products, setProducts] = useState(staticProducts);
   const tabs = ['Trending', 'New Arrivals', 'Best Sellers', 'Festive Edit'];
+
+  const loadProducts = () => {
+    const adminProducts = getProducts();
+    const merged = {
+      Trending: [...staticProducts.Trending],
+      'New Arrivals': [...staticProducts['New Arrivals']],
+      'Best Sellers': [...staticProducts['Best Sellers']],
+      'Festive Edit': [...staticProducts['Festive Edit']],
+    };
+
+    adminProducts.forEach((p) => {
+      const col = p.collection;
+      if (merged[col]) {
+        if (!merged[col].some((existing) => existing.id === p.id)) {
+          merged[col].unshift(p);
+        }
+      }
+    });
+
+    setProducts(merged);
+  };
+
+  useEffect(() => {
+    loadProducts();
+    window.addEventListener('admin-data-updated', loadProducts);
+    return () => window.removeEventListener('admin-data-updated', loadProducts);
+  }, []);
 
   return (
     <section className="py-28 bg-[#FAF9F6] relative overflow-hidden">

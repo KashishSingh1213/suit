@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Heart, MessageCircle, X, ShoppingBag } from 'lucide-react';
+import { getGallery, getProducts } from '../utils/adminStore';
 
 const Instagram = ({ size = 20, className = "" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -10,7 +11,7 @@ const Instagram = ({ size = 20, className = "" }) => (
   </svg>
 );
 
-const galleryItems = [
+const staticGalleryItems = [
   { id: 1, image: '/designer_suit_1.png', category: 'Traditional', likes: '1.2k', comments: '142', productId: 't1', caption: 'Capturing royal heritage in our zardozi silk suit. Elegance in every single stitch.' },
   { id: 2, image: '/anarkali_suit.png', category: 'Designer', likes: '942', comments: '85', productId: 'n1', caption: 'The perfect crimson flare for festive gatherings. Designed for true connoisseurs.' },
   { id: 3, image: '/pakistani_suit.png', category: 'Party', likes: '2.5k', comments: '210', productId: 't4', caption: 'Vibrant Pakistani silhouettes that flow beautifully. Perfect summer styling.' },
@@ -22,7 +23,7 @@ const galleryItems = [
 ];
 
 const lookupProduct = (id) => {
-  const allProducts = [
+  const staticProducts = [
     { id: 't1', name: 'Embroidered Silk Suit Set', price: '₹4,299', image: '/designer_suit_1.png', boutique: 'Kala Mandir', badge: 'Silk Blend' },
     { id: 't2', name: 'Chanderi Salwar Suit Set', price: '₹3,899', image: '/cotton_suit.png', boutique: 'Zari Heritage', badge: 'Handloom' },
     { id: 't3', name: 'Designer Angrakha Suit Set', price: '₹5,499', image: '/sharara_suit.png', boutique: 'Gulabo Jaipur', badge: 'Premium' },
@@ -32,12 +33,27 @@ const lookupProduct = (id) => {
     { id: 'b2', name: 'Chikankari Handloom Suit Set', price: '₹7,499', image: '/chikankari_suit.png', boutique: 'Awadh Kraft', badge: 'Artisanal' },
     { id: 'b3', name: 'Banarasi Brocade Suit Set', price: '₹9,299', image: '/banarasi_suit.png', boutique: 'Kashi Fabrics', badge: 'Heritage' },
   ];
+  const adminProducts = getProducts();
+  const allProducts = [...adminProducts, ...staticProducts];
   return allProducts.find(p => p.id === id);
 };
 
 export default function Gallery({ addToCart }) {
   const [filter, setFilter] = useState('All');
   const [lightboxItem, setLightboxItem] = useState(null);
+  const [galleryItems, setGalleryItems] = useState(staticGalleryItems);
+
+  const loadGallery = () => {
+    const adminGallery = getGallery();
+    const merged = [...adminGallery, ...staticGalleryItems.filter(s => !adminGallery.some(a => a.id === s.id))];
+    setGalleryItems(merged);
+  };
+
+  useEffect(() => {
+    loadGallery();
+    window.addEventListener('admin-data-updated', loadGallery);
+    return () => window.removeEventListener('admin-data-updated', loadGallery);
+  }, []);
 
   const categories = ['All', 'Traditional', 'Designer', 'Party', 'Casual'];
 

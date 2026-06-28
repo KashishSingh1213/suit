@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, ShoppingBag, Info } from 'lucide-react';
+import { getLookbook } from '../utils/adminStore';
 
-const hotspots = [
+const initialHotspots = [
   {
     id: 1,
     top: '35%',
@@ -32,8 +33,27 @@ const hotspots = [
   }
 ];
 
+const defaultLookbook = {
+  bgImage: '/hero_campaign_palace.png',
+  hotspots: initialHotspots
+};
+
 export default function InteractiveLookbook({ addToCart }) {
   const [activeHotspot, setActiveHotspot] = useState(null);
+  const [bgImage, setBgImage] = useState(defaultLookbook.bgImage);
+  const [hotspots, setHotspots] = useState(defaultLookbook.hotspots);
+
+  const loadLookbook = () => {
+    const data = getLookbook(defaultLookbook);
+    setBgImage(data.bgImage || defaultLookbook.bgImage);
+    setHotspots(data.hotspots || defaultLookbook.hotspots);
+  };
+
+  useEffect(() => {
+    loadLookbook();
+    window.addEventListener('admin-data-updated', loadLookbook);
+    return () => window.removeEventListener('admin-data-updated', loadLookbook);
+  }, []);
 
   return (
     <section className="bg-[#FAF9F6] relative h-[100vh] md:h-[120vh] overflow-hidden" id="lookbook">
@@ -41,7 +61,7 @@ export default function InteractiveLookbook({ addToCart }) {
       {/* Background Image Container */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="/hero_campaign_palace.png" 
+          src={bgImage} 
           alt="Campaign Lookbook" 
           className="w-full h-full object-cover object-center opacity-40 mix-blend-luminosity scale-105"
         />

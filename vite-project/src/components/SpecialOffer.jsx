@@ -1,43 +1,65 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Copy, Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { getPromo } from '../utils/adminStore';
 
-const fabrics = [
+const staticFabrics = [
   { name: 'Heritage Banarasi Silk', image: '/banarasi_suit.png', desc: 'Handwoven pure zari panels.' },
   { name: 'Lucknowi Chikankari', image: '/chikankari_suit.png', desc: 'Detailed shadow stitch artistry.' },
   { name: 'Summer Gota Patti', image: '/sharara_suit.png', desc: 'Traditional royal gold borders.' }
 ];
 
+const defaultPromo = {
+  title: 'Summer Festive Edit',
+  discount: '40',
+  couponCode: 'FESTIVE40',
+  endDate: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+  endTime: '23:59',
+  fabrics: staticFabrics,
+};
+
 export default function SpecialOffer() {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 4,
-    hours: 12,
-    minutes: 48,
-    seconds: 35,
-  });
-  
+  const [promo, setPromo] = useState(defaultPromo);
+  const [fabrics, setFabrics] = useState(staticFabrics);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [copied, setCopied] = useState(false);
   const [activeFabric, setActiveFabric] = useState(0);
 
+  const loadPromoData = () => {
+    const data = getPromo(defaultPromo);
+    setPromo(data);
+    setFabrics(data.fabrics || staticFabrics);
+  };
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        } else if (prev.days > 0) {
-          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        } else {
-          clearInterval(interval);
-          return prev;
-        }
-      });
-    }, 1000);
-    return () => clearInterval(interval);
+    loadPromoData();
+    window.addEventListener('admin-data-updated', loadPromoData);
+    return () => window.removeEventListener('admin-data-updated', loadPromoData);
   }, []);
+
+  useEffect(() => {
+    if (!promo.endDate) return;
+
+    const calculateTimeLeft = () => {
+      const endDateTimeStr = `${promo.endDate}T${promo.endTime || '00:00'}:00`;
+      const difference = +new Date(endDateTimeStr) - +new Date();
+      
+      let newTimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      if (difference > 0) {
+        newTimeLeft = {
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        };
+      }
+      setTimeLeft(newTimeLeft);
+    };
+
+    calculateTimeLeft();
+    const interval = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(interval);
+  }, [promo]);
 
   const formatNumber = (num) => String(num).padStart(2, '0');
 
@@ -49,7 +71,7 @@ export default function SpecialOffer() {
   ];
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText('FESTIVE40');
+    navigator.clipboard.writeText(promo.couponCode || 'FESTIVE40');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -89,8 +111,8 @@ export default function SpecialOffer() {
             </span>
             <h2 className="text-4xl md:text-5xl font-light text-[#111111] mb-5 leading-tight"
               style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              Summer Festive Edit<br />
-              <em className="italic text-[#BCA58A]">Up to 40% Off</em>
+              {promo.title}<br />
+              <em className="italic text-[#BCA58A]">Up to {promo.discount}% Off</em>
             </h2>
             
             <p className="text-[#6B6B6B] text-sm mb-10 leading-relaxed max-w-lg"
@@ -102,7 +124,7 @@ export default function SpecialOffer() {
             <div className="flex gap-4 mb-10">
               {timerItems.map((item, index) => (
                 <div key={index} className="flex flex-col items-center">
-                  <div className="w-16 h-16 md:w-20 md:h-20 bg-[#E8DDD0] border border-[#BCA58A]/20 flex items-center justify-center text-2xl md:text-3xl font-light text-[#111111] hover:border-[#BCA58A]/50 transition-all duration-300"
+                  <div className="w-16 h-16 md:w-20 md:h-20 bg-[#E8DDD0] border border-[#BCA58A]/20 flex items-center justify-center text-2xl md:text-3xl font-light text-[#111111] hover:border-[#BCA58A]/50 transition-all duration-300 relative"
                     style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                     {formatNumber(item.value)}
                     <div className="absolute inset-0 bg-gradient-to-b from-[#BCA58A]/5 to-transparent pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -122,7 +144,7 @@ export default function SpecialOffer() {
                 onClick={handleCopyCode}
                 className="group relative bg-[#BCA58A]/10 hover:bg-[#BCA58A]/20 border border-dashed border-[#BCA58A] px-5 py-2.5 rounded-xl text-[#111111] font-mono font-bold tracking-widest text-sm flex items-center gap-2.5 transition-all duration-300"
               >
-                <span>FESTIVE40</span>
+                <span>{promo.couponCode || 'FESTIVE40'}</span>
                 {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-[#BCA58A] group-hover:text-[#111111]" />}
                 
                 {/* Floating tooltip */}

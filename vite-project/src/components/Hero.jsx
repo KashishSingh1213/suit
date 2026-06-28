@@ -1,17 +1,52 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useSpring, AnimatePresence } from 'framer-motion';
 import { ArrowRight, ShoppingBag } from 'lucide-react';
+import { getHero } from '../utils/adminStore';
 
-const galleryItems = [
-  { id: 1, image: '/hero_campaign_suits.png', name: 'Banarasi Silk' },
-  { id: 2, image: '/anarkali_suit.png', name: 'Royal Anarkali' },
-  { id: 3, image: '/sharara_suit.png', name: 'Modern Sharara' },
-  { id: 4, image: '/sky_blue_suit.jpg', name: 'Glacier Blue Organza' },
-  { id: 5, image: '/hero_campaign_palace.png', name: 'Bridal Couture' },
-  { id: 6, image: '/designer_suit_1.png', name: 'Heritage Luxe' },
+const staticGalleryItems = [
+  { id: 1, image: '/hero_campaign_suits.png', name: 'Banarasi Silk', title: 'Banarasi Silk' },
+  { id: 2, image: '/anarkali_suit.png', name: 'Royal Anarkali', title: 'Royal Anarkali' },
+  { id: 3, image: '/sharara_suit.png', name: 'Modern Sharara', title: 'Modern Sharara' },
+  { id: 4, image: '/sky_blue_suit.jpg', name: 'Glacier Blue Organza', title: 'Glacier Blue Organza' },
+  { id: 5, image: '/hero_campaign_palace.png', name: 'Bridal Couture', title: 'Bridal Couture' },
+  { id: 6, image: '/designer_suit_1.png', name: 'Heritage Luxe', title: 'Heritage Luxe' },
 ];
 
+const defaultHeroData = {
+  tagLine: 'Edition 2026',
+  heading: 'Unveiling Masterpieces',
+  subText: 'A curated journey through heritage craftsmanship and modern luxury silhouettes.',
+  ctaText: 'Explore Gallery',
+  ctaLink: '#collections',
+};
+
 export default function Hero({ addToCart }) {
+  const [heroData, setHeroData] = useState(defaultHeroData);
+  const [galleryItems, setGalleryItems] = useState(staticGalleryItems);
+
+  const loadHeroData = () => {
+    const data = getHero(defaultHeroData);
+    setHeroData(data);
+
+    // If there are slides saved from the admin panel hero slideshow
+    // (Wait, we can fetch the slides too. In HeroSection.jsx we had `slides` array. Let's make sure it's stored under KEYS.hero or we can load it from localStorage if we saved it in getHero)
+    if (data && data.slides && data.slides.length > 0) {
+      setGalleryItems(data.slides.map((s, idx) => ({
+        id: s.id || idx,
+        image: s.image,
+        name: s.title || 'Collection item'
+      })));
+    } else {
+      setGalleryItems(staticGalleryItems);
+    }
+  };
+
+  useEffect(() => {
+    loadHeroData();
+    window.addEventListener('admin-data-updated', loadHeroData);
+    return () => window.removeEventListener('admin-data-updated', loadHeroData);
+  }, []);
+
   const infiniteItems = [...galleryItems, ...galleryItems];
   
   // Magnetic Button State
@@ -100,36 +135,36 @@ export default function Hero({ addToCart }) {
           <div className="flex items-center gap-4 mb-8">
             <div className="w-8 h-px bg-[#BCA58A]" />
             <span className="text-[9px] tracking-[0.4em] text-[#BCA58A] uppercase font-bold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Edition 2026
+              {heroData.tagLine}
             </span>
           </div>
           
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-light text-[#111111] leading-[0.9] tracking-tight mb-8 relative z-20" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            Unveiling <br/>
+            {heroData.heading.split(' ')[0]} <br/>
             <span 
               className="italic text-[#BCA58A] pl-8 block cursor-pointer transition-colors hover:text-[#111111]"
               onMouseEnter={() => setIsTextHovered(true)}
               onMouseLeave={() => setIsTextHovered(false)}
             >
-              Masterpieces
+              {heroData.heading.split(' ').slice(1).join(' ') || 'Masterpieces'}
             </span>
           </h1>
           
           <p className="text-[#6B6B6B] text-xs tracking-widest uppercase font-bold max-w-xs mb-12 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-            A curated journey through heritage craftsmanship and modern luxury silhouettes.
+            {heroData.subText}
           </p>
           
           <div className="flex items-start">
             <motion.a 
               ref={buttonRef}
-              href="#collections" 
+              href={heroData.ctaLink || "#collections"} 
               style={{ x: springX, y: springY }}
               className="relative flex items-center justify-center w-36 h-36 rounded-full border border-[#111111]/20 text-[#111111] group overflow-hidden transition-colors hover:border-[#BCA58A] z-30 bg-[#FAF9F6]"
             >
               <div className="absolute inset-0 bg-[#BCA58A] scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full ease-[cubic-bezier(0.16,1,0.3,1)] origin-center" />
               <div className="relative z-10 flex flex-col items-center gap-2 group-hover:text-[#FAF9F6] transition-colors duration-300">
                 <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-center px-4" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                  Explore <br/> Gallery
+                  {heroData.ctaText.split(' ')[0]} <br/> {heroData.ctaText.split(' ').slice(1).join(' ') || 'Gallery'}
                 </span>
                 <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
               </div>

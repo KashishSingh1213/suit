@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { getTestimonials } from '../utils/adminStore';
 
-const testimonials = [
+const staticTestimonials = [
   {
     name: 'Priya Sharma',
     role: 'New Delhi',
@@ -35,11 +36,35 @@ const testimonials = [
 
 export default function Testimonials() {
   const [current, setCurrent] = useState(0);
+  const [testimonials, setTestimonials] = useState(staticTestimonials);
+
+  const loadTestimonials = () => {
+    const adminReviews = getTestimonials().filter(r => r.published).map(r => ({
+      name: r.name,
+      role: r.location,
+      text: r.review,
+      rating: r.rating,
+      avatar: r.photo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&h=150&q=80'
+    }));
+
+    if (adminReviews.length > 0) {
+      setTestimonials(adminReviews);
+    } else {
+      setTestimonials(staticTestimonials);
+    }
+  };
 
   useEffect(() => {
+    loadTestimonials();
+    window.addEventListener('admin-data-updated', loadTestimonials);
+    return () => window.removeEventListener('admin-data-updated', loadTestimonials);
+  }, []);
+
+  useEffect(() => {
+    if (testimonials.length === 0) return;
     const timer = setInterval(() => setCurrent((prev) => (prev + 1) % testimonials.length), 7000);
     return () => clearInterval(timer);
-  }, []);
+  }, [testimonials]);
 
   return (
     <section className="py-24 bg-[#FAF9F6] relative overflow-hidden border-t border-[#BCA58A]/10">
