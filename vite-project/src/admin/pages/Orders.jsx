@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Eye, Edit2, ChevronDown, Package } from 'lucide-react';
+import { getOrders, syncOrders, updateOrderStatus } from '../../utils/adminStore';
 
 const orders = [
   { id: '#ORD-1042', customer: 'Priya Sharma', email: 'priya@email.com', product: 'Banarasi Silk Suit', size: 'M (38)', qty: 1, amount: '₹9,299', status: 'Delivered', date: '27 Jun 2026', payment: 'UPI', city: 'Delhi' },
@@ -26,17 +27,42 @@ const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancell
 export default function Orders() {
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
-  const [orderData, setOrderData] = useState(orders);
+  const [orderData, setOrderData] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
 
+  // Load and sync orders from database and localStorage
+  useEffect(() => {
+    const loadAndMerge = (sourceOrders) => {
+      const merged = [...sourceOrders];
+      orders.forEach(mockOrder => {
+        if (!merged.some(o => (o.orderId || o.id) === mockOrder.id)) {
+          merged.push(mockOrder);
+        }
+      });
+      setOrderData(merged);
+    };
+
+    // Load initial localStorage orders
+    const local = getOrders();
+    loadAndMerge(local);
+
+    // Sync in background from cloud Firestore database
+    syncOrders((syncedList) => {
+      loadAndMerge(syncedList);
+    });
+  }, []);
+
   const filtered = orderData.filter(o => {
-    const matchSearch = o.customer.toLowerCase().includes(search.toLowerCase()) || o.id.includes(search);
+    const custName = o.customer || o.shippingDetails?.name || 'Customer';
+    const ordId = o.orderId || o.id;
+    const matchSearch = custName.toLowerCase().includes(search.toLowerCase()) || ordId.includes(search);
     const matchStatus = filterStatus === 'All' || o.status === filterStatus;
     return matchSearch && matchStatus;
   });
 
   const updateStatus = (id, newStatus) => {
-    setOrderData(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+    setOrderData(prev => prev.map(o => (o.id === id || o.orderId === id) ? { ...o, status: newStatus } : o));
+    updateOrderStatus(id, newStatus);
   };
 
   const counts = statusOptions.reduce((acc, s) => {
@@ -97,34 +123,39 @@ export default function Orders() {
             <tbody className="divide-y divide-[#C8E8EC]">
               <AnimatePresence>
                 {filtered.map((order, i) => {
-                  const sc = statusConfig[order.status];
-                  const isExpanded = expandedId === order.id;
+                  const sc = statusConfig[order.status] || statusConfig.Pending;
+                  const ordId = order.orderId || order.id;
+                  const isExpanded = expandedId === ordId;
+                  
+                  const productName = order.product || (order.items && order.items.length > 0 ? order.items[0].name + (order.items.length > 1 ? ` + ${order.items.length - 1} more` : '') : 'Custom Suit');
+                  const productSize = order.size || (order.items && order.items.length > 0 ? order.items[0].size : 'M');
+                  const productQty = order.qty || (order.items ? order.items.reduce((sum, item) => sum + item.quantity, 0) : 1);
+
                   return (
-                    <>
+                    <React.Fragment key={ordId}>
                       <motion.tr
-                        key={order.id}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: i * 0.04 }}
-                        className="hover:bg-[#FDFBF9] transition-colors"
+                        className="hover:bg-[#FDFBF9] transition-colors text-left"
                       >
                         <td className="px-5 py-4">
-                          <span className="text-sm font-bold text-[#005461]">{order.id}</span>
+                          <span className="text-sm font-bold text-[#005461]">{ordId}</span>
                         </td>
                         <td className="px-5 py-4">
                           <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 rounded-lg bg-[#C8E8EC] flex items-center justify-center text-xs font-bold text-[#005461] flex-shrink-0">
-                              {order.customer.charAt(0)}
+                              {(order.customer || 'C').charAt(0)}
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-[#1A1A1A]">{order.customer}</p>
-                              <p className="text-xs text-[#9E9189]">{order.city}</p>
+                              <p className="text-sm font-semibold text-[#1A1A1A]">{order.customer || order.shippingDetails?.name || 'Customer'}</p>
+                              <p className="text-xs text-[#9E9189]">{order.city || 'N/A'}</p>
                             </div>
                           </div>
                         </td>
                         <td className="px-5 py-4">
-                          <p className="text-sm text-[#1A1A1A] font-medium max-w-[160px] truncate">{order.product}</p>
-                          <p className="text-xs text-[#9E9189]">Size: {order.size} · Qty: {order.qty}</p>
+                          <p className="text-sm text-[#1A1A1A] font-medium max-w-[160px] truncate">{productName}</p>
+                          <p className="text-xs text-[#9E9189]">Size: {productSize} · Qty: {productQty}</p>
                         </td>
                         <td className="px-5 py-4">
                           <p className="text-sm font-bold text-[#1A1A1A]">{order.amount}</p>
@@ -134,7 +165,7 @@ export default function Orders() {
                           <div className="relative">
                             <select
                               value={order.status}
-                              onChange={e => updateStatus(order.id, e.target.value)}
+                              onChange={e => updateStatus(ordId, e.target.value)}
                               className="text-xs font-semibold px-3 py-1.5 rounded-full border-0 appearance-none cursor-pointer focus:outline-none pr-6"
                               style={{ background: sc.bg, color: sc.text }}
                             >
@@ -146,41 +177,60 @@ export default function Orders() {
                         <td className="px-5 py-4 text-sm text-[#6B6B6B]">{order.date}</td>
                         <td className="px-5 py-4">
                           <button
-                            onClick={() => setExpandedId(isExpanded ? null : order.id)}
-                            className="w-8 h-8 rounded-lg bg-[#C8E8EC] flex items-center justify-center hover:bg-[#C8E8EC] transition-colors"
+                            onClick={() => setExpandedId(isExpanded ? null : ordId)}
+                            className="w-8 h-8 rounded-lg bg-[#C8E8EC] flex items-center justify-center hover:bg-[#C8E8EC] transition-colors cursor-pointer"
                           >
                             <Eye size={14} className="text-[#6B6B6B]" />
                           </button>
                         </td>
                       </motion.tr>
+                      
                       {/* Expanded detail row */}
                       <AnimatePresence>
                         {isExpanded && (
                           <motion.tr
-                            key={`${order.id}-detail`}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                           >
                             <td colSpan={7} className="px-5 py-4 bg-[#FDFBF8] border-b border-[#C8E8EC]">
-                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-left">
                                 {[
-                                  { label: 'Email', value: order.email },
-                                  { label: 'Payment', value: order.payment },
-                                  { label: 'City', value: order.city },
-                                  { label: 'Order Date', value: order.date },
+                                  { label: 'Email', value: order.email || 'N/A' },
+                                  { label: 'Payment Mode', value: order.payment || 'N/A' },
+                                  { label: 'Shipping City', value: order.city || 'N/A' },
+                                  { label: 'Order Date', value: order.date || 'N/A' },
                                 ].map(({ label, value }) => (
                                   <div key={label} className="bg-white rounded-xl p-3 border border-[#C8E8EC]">
                                     <p className="text-xs text-[#9E9189] uppercase tracking-wider mb-1">{label}</p>
                                     <p className="font-semibold text-[#1A1A1A]">{value}</p>
                                   </div>
                                 ))}
+
+                                {order.items && order.items.length > 0 && (
+                                  <div className="col-span-2 sm:col-span-4 mt-2 border-t border-[#C8E8EC] pt-4">
+                                    <p className="text-xs text-[#9E9189] uppercase tracking-wider mb-2 font-bold">Ordered Items</p>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                      {order.items.map((item, idx) => (
+                                        <div key={idx} className="bg-white rounded-xl p-3 border border-[#C8E8EC] flex items-center gap-3">
+                                          <div className="w-10 h-13 overflow-hidden bg-white border border-[#C8E8EC] flex-shrink-0">
+                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover object-top" />
+                                          </div>
+                                          <div className="flex-1 min-w-0">
+                                            <p className="font-semibold text-sm text-[#1A1A1A] truncate">{item.name}</p>
+                                            <p className="text-xs text-[#9E9189]">Size: {item.size} · Qty: {item.quantity} · Price: {item.price}</p>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </td>
                           </motion.tr>
                         )}
                       </AnimatePresence>
-                    </>
+                    </React.Fragment>
                   );
                 })}
               </AnimatePresence>

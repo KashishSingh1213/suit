@@ -13,6 +13,8 @@ import Footer from './components/Footer'
 import CartPage from './components/CartPage'
 import CheckoutPage from './components/CheckoutPage'
 import LoginPage from './components/LoginPage'
+import CategoryPage from './components/CategoryPage'
+import ProductDetailsPage from './components/ProductDetailsPage'
 
 function App() {
   const [loadingComplete, setLoadingComplete] = useState(false)
@@ -21,6 +23,8 @@ function App() {
   const [favorites, setFavorites] = useState({})
   const [view, setView] = useState('home')
   const [user, setUser] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState(null)
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
   const handleLoadComplete = () => {
     setLoadingComplete(true)
@@ -89,6 +93,8 @@ function App() {
         toggleFavorite={toggleFavorite}
         addToCart={addToCart}
         setView={setView}
+        setSelectedCategory={setSelectedCategory}
+        setSelectedProduct={setSelectedProduct}
         user={user}
         handleLogout={handleLogout}
       />
@@ -96,13 +102,33 @@ function App() {
       {view === 'home' && (
         <>
           <Hero addToCart={addToCart} />
-          <MasonryGallery />
+          <MasonryGallery setView={setView} setSelectedProduct={setSelectedProduct} addToCart={addToCart} />
           <ScrollytellingCraft />
           <FabricMagnifier />
-          <InteractiveLookbook addToCart={addToCart} />
+          <InteractiveLookbook addToCart={addToCart} setView={setView} setSelectedProduct={setSelectedProduct} />
           <Testimonials />
           <SpecialOffer />
         </>
+      )}
+
+      {view === 'category' && (
+        <CategoryPage 
+          categoryName={selectedCategory}
+          setView={setView}
+          setSelectedProduct={setSelectedProduct}
+          addToCart={addToCart}
+        />
+      )}
+
+      {view === 'product-details' && (
+        <ProductDetailsPage 
+          product={selectedProduct}
+          setView={setView}
+          setSelectedCategory={setSelectedCategory}
+          addToCart={addToCart}
+          favorites={favorites}
+          toggleFavorite={toggleFavorite}
+        />
       )}
 
       {view === 'cart' && (

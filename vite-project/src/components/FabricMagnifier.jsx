@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
 
@@ -7,6 +7,20 @@ export default function FabricMagnifier() {
   const [isHovered, setIsHovered] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [bgPosition, setBgPosition] = useState({ x: '50%', y: '50%' });
+  const [lensSize, setLensSize] = useState(250);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setLensSize(160);
+      } else {
+        setLensSize(250);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // High-res image for the fabric details
   const fabricImage = '/chikankari_suit.png'; // We'll use this as our intricate fabric
@@ -34,7 +48,7 @@ export default function FabricMagnifier() {
       <div className="max-w-[1600px] mx-auto px-6 md:px-12 flex flex-col lg:flex-row gap-16 items-center">
         
         {/* Left Side: Typography */}
-        <div className="w-full lg:w-1/3">
+        <div className="w-full lg:w-1/3 text-left">
           <span className="text-[#BCA58A] text-[10px] tracking-[0.4em] uppercase font-bold mb-6 block" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             The Microscopic Detail
           </span>
@@ -80,10 +94,10 @@ export default function FabricMagnifier() {
                 transition={{ duration: 0.2 }}
                 className="absolute pointer-events-none z-10 rounded-full border-4 border-[#BCA58A]/30 shadow-2xl backdrop-blur-sm"
                 style={{
-                  width: '250px',
-                  height: '250px',
-                  left: `${position.x - 125}px`, // Center the lens on cursor (250 / 2)
-                  top: `${position.y - 125}px`,
+                  width: `${lensSize}px`,
+                  height: `${lensSize}px`,
+                  left: `${position.x - lensSize / 2}px`, // Center the lens on cursor
+                  top: `${position.y - lensSize / 2}px`,
                   backgroundImage: `url(${fabricImage})`,
                   backgroundSize: '400% 400%', // 4x Zoom
                   backgroundPosition: `${bgPosition.x} ${bgPosition.y}`,

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, ShoppingBag, Info } from 'lucide-react';
-import { getLookbook } from '../utils/adminStore';
+import { getLookbook, getAllProducts } from '../utils/adminStore';
 
 const initialHotspots = [
   {
@@ -12,6 +12,7 @@ const initialHotspots = [
     price: '₹3,499',
     desc: 'Handwoven pure silk banarasi dupatta with intricate gold zari borders.',
     image: '/designer_suit_1.png',
+    realId: 'b3'
   },
   {
     id: 2,
@@ -21,6 +22,7 @@ const initialHotspots = [
     price: '₹14,999',
     desc: 'Voluminous 24-kali silk anarkali with hand-embroidered waist belt.',
     image: '/anarkali_suit.png',
+    realId: 'f3'
   },
   {
     id: 3,
@@ -30,6 +32,7 @@ const initialHotspots = [
     price: '₹8,999',
     desc: 'Deep maroon raw silk kurti featuring heavy zardozi neckwork.',
     image: '/sharara_suit.png',
+    realId: 'b1'
   }
 ];
 
@@ -38,15 +41,17 @@ const defaultLookbook = {
   hotspots: initialHotspots
 };
 
-export default function InteractiveLookbook({ addToCart }) {
+export default function InteractiveLookbook({ addToCart, setView, setSelectedProduct }) {
   const [activeHotspot, setActiveHotspot] = useState(null);
   const [bgImage, setBgImage] = useState(defaultLookbook.bgImage);
   const [hotspots, setHotspots] = useState(defaultLookbook.hotspots);
+  const [allProducts, setAllProducts] = useState([]);
 
   const loadLookbook = () => {
     const data = getLookbook(defaultLookbook);
     setBgImage(data.bgImage || defaultLookbook.bgImage);
     setHotspots(data.hotspots || defaultLookbook.hotspots);
+    setAllProducts(getAllProducts());
   };
 
   useEffect(() => {
@@ -116,19 +121,29 @@ export default function InteractiveLookbook({ addToCart }) {
       <AnimatePresence>
         {activeHotspot && (
           <motion.div 
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 50, transition: { duration: 0.2 } }}
-            className="absolute top-1/2 -translate-y-1/2 right-6 md:right-14 w-full max-w-[340px] bg-[#FAF9F6]/80 backdrop-blur-xl border border-[#BCA58A]/20 shadow-2xl p-6 z-30"
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.95, transition: { duration: 0.2 } }}
+            className="fixed md:absolute bottom-6 left-6 right-6 md:bottom-auto md:top-1/2 md:-translate-y-1/2 md:right-14 md:left-auto w-auto md:w-full md:max-w-[340px] bg-[#FAF9F6]/90 backdrop-blur-xl border border-[#BCA58A]/20 shadow-2xl p-6 z-30 rounded-xl md:rounded"
           >
             <button 
               onClick={() => setActiveHotspot(null)}
-              className="absolute top-4 right-4 text-[#6B6B6B] hover:text-[#111111] transition-colors cursor-pointer"
+              className="absolute top-4 right-4 text-[#6B6B6B] hover:text-[#111111] transition-colors cursor-pointer z-40"
             >
               <X size={18} />
             </button>
             
-            <div className="w-full aspect-[4/5] bg-[#E8DDD0] mb-5 overflow-hidden">
+            <div 
+              onClick={() => {
+                const found = allProducts.find(p => p.id === activeHotspot.realId);
+                if (found) {
+                  setSelectedProduct(found);
+                  setView('product-details');
+                  setActiveHotspot(null);
+                }
+              }}
+              className="w-full aspect-[4/5] bg-[#E8DDD0] mb-5 overflow-hidden cursor-pointer hover:opacity-90 transition-all rounded"
+            >
               <img src={activeHotspot.image} alt={activeHotspot.productName} className="w-full h-full object-cover" />
             </div>
 
@@ -137,7 +152,18 @@ export default function InteractiveLookbook({ addToCart }) {
               <span className="text-[9px] font-bold tracking-[0.2em] uppercase">Spotted in Look 01</span>
             </div>
             
-            <h3 className="text-xl font-medium text-[#111111] mb-1" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <h3 
+              onClick={() => {
+                const found = allProducts.find(p => p.id === activeHotspot.realId);
+                if (found) {
+                  setSelectedProduct(found);
+                  setView('product-details');
+                  setActiveHotspot(null);
+                }
+              }}
+              className="text-xl font-medium text-[#111111] mb-1 hover:text-[#BCA58A] cursor-pointer" 
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            >
               {activeHotspot.productName}
             </h3>
             <span className="text-sm font-semibold text-[#BCA58A] block mb-4">{activeHotspot.price}</span>
@@ -146,12 +172,21 @@ export default function InteractiveLookbook({ addToCart }) {
               {activeHotspot.desc}
             </p>
 
-            <button 
-              onClick={() => { addToCart(activeHotspot, 'M'); alert('Added to bag'); setActiveHotspot(null); }}
-              className="w-full bg-[#111111] hover:bg-[#BCA58A] text-[#FAF9F6] py-3.5 text-[10px] font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-2 transition-colors cursor-pointer"
-            >
-              <ShoppingBag size={14} /> Add to Bag
-            </button>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => {
+                  const found = allProducts.find(p => p.id === activeHotspot.realId);
+                  if (found) {
+                    addToCart(found, 'M');
+                    alert(`Added ${found.name} (Size M) to your bag!`);
+                    setActiveHotspot(null);
+                  }
+                }}
+                className="flex-1 bg-[#111111] hover:bg-[#BCA58A] text-[#FAF9F6] py-3.5 text-[10px] font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-2 transition-colors cursor-pointer"
+              >
+                <ShoppingBag size={14} /> Add to Bag
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

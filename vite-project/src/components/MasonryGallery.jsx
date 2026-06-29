@@ -1,27 +1,31 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { ShoppingBag } from 'lucide-react';
+import { getAllProducts } from '../utils/adminStore';
 
 const col1 = [
-  { id: 1, name: 'Royal Banarasi', price: '₹9,299', image: '/banarasi_suit.png', height: 'h-[60vh]' },
-  { id: 2, name: 'Chikankari Set', price: '₹7,499', image: '/chikankari_suit.png', height: 'h-[40vh]' },
-  { id: 3, name: 'Velvet Heritage', price: '₹14,999', image: '/designer_suit_1.png', height: 'h-[50vh]' },
+  { id: 1, realId: 'b3', name: 'Royal Banarasi', price: '₹9,299', image: '/banarasi_suit.png', height: 'h-[60vh]' },
+  { id: 2, realId: 'b2', name: 'Chikankari Set', price: '₹7,499', image: '/chikankari_suit.png', height: 'h-[40vh]' },
+  { id: 3, realId: 'b1', name: 'Velvet Heritage', price: '₹8,999', image: '/banarasi_suit.png', height: 'h-[50vh]' },
 ];
 
 const col2 = [
-  { id: 4, name: 'Zari Anarkali', price: '₹14,999', image: '/anarkali_suit.png', height: 'h-[45vh]' },
-  { id: 5, name: 'Bridal Couture', price: '₹24,999', image: '/hero_campaign_palace.png', height: 'h-[70vh]' },
-  { id: 6, name: 'Modern Sharara', price: '₹8,999', image: '/sharara_suit.png', height: 'h-[45vh]' },
+  { id: 4, realId: 't1', name: 'Zari Anarkali', price: '₹4,299', image: '/designer_suit_1.png', height: 'h-[45vh]' },
+  { id: 5, realId: 'f1', name: 'Bridal Couture', price: '₹11,499', image: '/sharara_suit.png', height: 'h-[70vh]' },
+  { id: 6, realId: 't3', name: 'Modern Sharara', price: '₹5,499', image: '/sharara_suit.png', height: 'h-[45vh]' },
 ];
 
 const col3 = [
-  { id: 7, name: 'Classic Straight', price: '₹5,499', image: '/pakistani_suit.png', height: 'h-[50vh]' },
-  { id: 8, name: 'Heritage Luxe', price: '₹12,499', image: '/hero_campaign_suits.png', height: 'h-[60vh]' },
-  { id: 9, name: 'Glacier Blue Organza', price: '₹14,500', image: '/sky_blue_suit.jpg', height: 'h-[40vh]' },
+  { id: 7, realId: 't4', name: 'Classic Straight', price: '₹4,799', image: '/pakistani_suit.png', height: 'h-[50vh]' },
+  { id: 8, realId: 'f3', name: 'Heritage Luxe', price: '₹13,999', image: '/anarkali_suit.png', height: 'h-[60vh]' },
+  { id: 9, realId: 'n3', name: 'Glacier Blue Organza', price: '₹14,500', image: '/sky_blue_suit.jpg', height: 'h-[40vh]' },
 ];
 
-const ProductCard = ({ item }) => (
-  <div className={`relative group w-full ${item.height} rounded-xl overflow-hidden cursor-pointer shadow-lg border border-[#111111]/5`}>
+const ProductCard = ({ item, onClickCard, onQuickAdd }) => (
+  <div 
+    onClick={() => onClickCard(item.realId)}
+    className={`relative group w-full ${item.height} rounded-xl overflow-hidden cursor-pointer shadow-lg border border-[#111111]/5`}
+  >
     <img 
       src={item.image} 
       alt={item.name} 
@@ -40,7 +44,13 @@ const ProductCard = ({ item }) => (
         {item.price}
       </p>
       
-      <button className="w-full bg-[#FAF9F6] hover:bg-[#BCA58A] hover:text-[#FAF9F6] text-[#111111] py-4 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] font-bold transition-colors">
+      <button 
+        onClick={(e) => {
+          e.stopPropagation();
+          onQuickAdd(item.realId);
+        }}
+        className="w-full bg-[#FAF9F6] hover:bg-[#BCA58A] hover:text-[#FAF9F6] text-[#111111] py-4 flex items-center justify-center gap-2 text-[10px] tracking-[0.2em] font-bold transition-colors"
+      >
         <ShoppingBag size={14} />
         <span>QUICK ADD</span>
       </button>
@@ -48,8 +58,18 @@ const ProductCard = ({ item }) => (
   </div>
 );
 
-export default function ParallaxMasonry() {
+export default function ParallaxMasonry({ setView, setSelectedProduct, addToCart }) {
   const containerRef = useRef(null);
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    setAllProducts(getAllProducts());
+    const handleUpdate = () => {
+      setAllProducts(getAllProducts());
+    };
+    window.addEventListener('admin-data-updated', handleUpdate);
+    return () => window.removeEventListener('admin-data-updated', handleUpdate);
+  }, []);
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -60,6 +80,22 @@ export default function ParallaxMasonry() {
   const y1 = useTransform(scrollYProgress, [0, 1], ["0%", "-5%"]);
   const y2 = useTransform(scrollYProgress, [0, 1], ["5%", "-15%"]); 
   const y3 = useTransform(scrollYProgress, [0, 1], ["0%", "-10%"]);
+
+  const handleCardClick = (realId) => {
+    const found = allProducts.find(p => p.id === realId);
+    if (found) {
+      setSelectedProduct(found);
+      setView('product-details');
+    }
+  };
+
+  const handleQuickAdd = (realId) => {
+    const found = allProducts.find(p => p.id === realId);
+    if (found) {
+      addToCart(found, 'M');
+      alert(`Added ${found.name} (Size M) to your bag!`);
+    }
+  };
 
   return (
     <section ref={containerRef} className="relative bg-[#FAF9F6] pt-32 pb-12 overflow-hidden" id="collections">
@@ -102,17 +138,38 @@ export default function ParallaxMasonry() {
           
           {/* Column 1 */}
           <motion.div style={{ y: y1 }} className="flex-1 flex flex-col gap-6 md:gap-8 lg:gap-12">
-            {col1.map(item => <ProductCard key={item.id} item={item} />)}
+            {col1.map(item => (
+              <ProductCard 
+                key={item.id} 
+                item={item} 
+                onClickCard={handleCardClick}
+                onQuickAdd={handleQuickAdd}
+              />
+            ))}
           </motion.div>
 
           {/* Column 2 (Middle - Offset and Faster) */}
           <motion.div style={{ y: y2 }} className="flex-1 flex flex-col gap-6 md:gap-8 lg:gap-12 md:mt-24">
-            {col2.map(item => <ProductCard key={item.id} item={item} />)}
+            {col2.map(item => (
+              <ProductCard 
+                key={item.id} 
+                item={item} 
+                onClickCard={handleCardClick}
+                onQuickAdd={handleQuickAdd}
+              />
+            ))}
           </motion.div>
 
           {/* Column 3 */}
           <motion.div style={{ y: y3 }} className="flex-1 flex flex-col gap-6 md:gap-8 lg:gap-12 md:mt-12">
-            {col3.map(item => <ProductCard key={item.id} item={item} />)}
+            {col3.map(item => (
+              <ProductCard 
+                key={item.id} 
+                item={item} 
+                onClickCard={handleCardClick}
+                onQuickAdd={handleQuickAdd}
+              />
+            ))}
           </motion.div>
 
         </div>

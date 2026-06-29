@@ -88,7 +88,7 @@ export default function Hero({ addToCart }) {
   const floatY = useSpring(mousePos.y, { stiffness: 100, damping: 20 });
 
   return (
-    <section className="relative w-full h-screen min-h-[700px] bg-[#FAF9F6] flex flex-col md:flex-row overflow-hidden cursor-default">
+    <section className="relative w-full min-h-screen md:h-screen bg-[#FAF9F6] flex flex-col md:flex-row overflow-hidden cursor-default">
       
       {/* Subtle Film Grain Overlay */}
       <div className="absolute inset-0 pointer-events-none z-50 opacity-[0.04] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
@@ -117,11 +117,11 @@ export default function Hero({ addToCart }) {
       </div>
 
       {/* Left Side: Editorial Canvas */}
-      <div className="relative w-full md:w-[45%] lg:w-[40%] h-[40vh] md:h-full flex flex-col justify-center px-6 md:px-12 lg:px-20 z-20 bg-[#FAF9F6] shadow-[20px_0_40px_rgba(0,0,0,0.03)] pt-20 md:pt-0">
+      <div className="relative w-full md:w-[45%] lg:w-[40%] h-auto min-h-[55vh] md:h-full flex flex-col justify-center px-6 md:px-12 lg:px-20 z-20 bg-[#FAF9F6] shadow-[20px_0_40px_rgba(0,0,0,0.03)] pt-28 pb-14 md:py-0">
         
         {/* Massive Background Number */}
         <div className="absolute top-1/2 -translate-y-1/2 left-0 pl-12 opacity-[0.03] pointer-events-none select-none">
-          <span className="text-[300px] font-light leading-none" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+          <span className="text-[180px] md:text-[300px] font-light leading-none" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             01
           </span>
         </div>
@@ -132,17 +132,17 @@ export default function Hero({ addToCart }) {
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="relative z-10"
         >
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-6 md:mb-8">
             <div className="w-8 h-px bg-[#BCA58A]" />
             <span className="text-[9px] tracking-[0.4em] text-[#BCA58A] uppercase font-bold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
               {heroData.tagLine}
             </span>
           </div>
           
-          <h1 className="text-6xl md:text-7xl lg:text-8xl font-light text-[#111111] leading-[0.9] tracking-tight mb-8 relative z-20" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-light text-[#111111] leading-[0.95] tracking-tight mb-6 md:mb-8 relative z-20" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             {heroData.heading.split(' ')[0]} <br/>
             <span 
-              className="italic text-[#BCA58A] pl-8 block cursor-pointer transition-colors hover:text-[#111111]"
+              className="italic text-[#BCA58A] pl-6 md:pl-8 block cursor-pointer transition-colors hover:text-[#111111]"
               onMouseEnter={() => setIsTextHovered(true)}
               onMouseLeave={() => setIsTextHovered(false)}
             >
@@ -150,7 +150,7 @@ export default function Hero({ addToCart }) {
             </span>
           </h1>
           
-          <p className="text-[#6B6B6B] text-xs tracking-widest uppercase font-bold max-w-xs mb-12 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="text-[#6B6B6B] text-[10px] md:text-xs tracking-widest uppercase font-bold max-w-xs mb-8 md:mb-12 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             {heroData.subText}
           </p>
           
@@ -159,14 +159,14 @@ export default function Hero({ addToCart }) {
               ref={buttonRef}
               href={heroData.ctaLink || "#collections"} 
               style={{ x: springX, y: springY }}
-              className="relative flex items-center justify-center w-36 h-36 rounded-full border border-[#111111]/20 text-[#111111] group overflow-hidden transition-colors hover:border-[#BCA58A] z-30 bg-[#FAF9F6]"
+              className="relative flex items-center justify-center w-28 h-28 md:w-36 md:h-36 rounded-full border border-[#111111]/20 text-[#111111] group overflow-hidden transition-colors hover:border-[#BCA58A] z-30 bg-[#FAF9F6]"
             >
               <div className="absolute inset-0 bg-[#BCA58A] scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full ease-[cubic-bezier(0.16,1,0.3,1)] origin-center" />
-              <div className="relative z-10 flex flex-col items-center gap-2 group-hover:text-[#FAF9F6] transition-colors duration-300">
-                <span className="text-[9px] uppercase tracking-[0.3em] font-bold text-center px-4" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              <div className="relative z-10 flex flex-col items-center gap-1.5 group-hover:text-[#FAF9F6] transition-colors duration-300">
+                <span className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] font-bold text-center px-3" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                   {heroData.ctaText.split(' ')[0]} <br/> {heroData.ctaText.split(' ').slice(1).join(' ') || 'Gallery'}
                 </span>
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform duration-300" />
+                <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-300" />
               </div>
             </motion.a>
           </div>
@@ -174,14 +174,14 @@ export default function Hero({ addToCart }) {
       </div>
 
       {/* Right Side: Skewed Auto-Scrolling Gallery */}
-      <div className="w-full md:w-[55%] lg:w-[60%] h-[60vh] md:h-full relative overflow-hidden bg-[#FAF9F6]">
+      <div className="w-full md:w-[55%] lg:w-[60%] h-[45vh] md:h-full relative overflow-hidden bg-[#FAF9F6]">
         
         {/* Soft edge gradients */}
         <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-[#FAF9F6] to-transparent z-10 hidden md:block pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-full h-40 bg-gradient-to-t from-[#FAF9F6] to-transparent z-10 hidden md:block pointer-events-none" />
 
         <motion.div 
-          className="flex flex-wrap md:flex-col gap-4 p-4 md:p-12 md:pl-0"
+          className="flex flex-col gap-4 p-4 md:p-12 md:pl-0"
           animate={{ y: ["0%", "-50%"] }}
           transition={{ y: { repeat: Infinity, repeatType: "loop", duration: 40, ease: "linear" } }}
         >

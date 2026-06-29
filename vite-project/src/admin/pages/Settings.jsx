@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Eye, EyeOff, Globe, Mail, Phone, Upload, Shield, Palette, Database, Save, Lock, Store, AtSign } from 'lucide-react';
 
@@ -85,7 +85,39 @@ export default function Settings() {
   const [logoPreview, setLogoPreview] = useState(null);
   const [savedSection, setSavedSection] = useState(null);
 
-  const handleSave = (section) => { setSavedSection(section); setTimeout(() => setSavedSection(null), 2200); };
+  // Load saved configurations on mount
+  useEffect(() => {
+    try {
+      const savedFirebase = localStorage.getItem('gurnaaz_firebase_config');
+      if (savedFirebase) {
+        setFirebase(JSON.parse(savedFirebase));
+      }
+      
+      const savedGeneral = localStorage.getItem('gurnaaz_general_config');
+      if (savedGeneral) {
+        setGeneral(JSON.parse(savedGeneral));
+      }
+    } catch (e) {
+      console.error('Error loading settings from localStorage:', e);
+    }
+  }, []);
+
+  const handleSave = (section) => {
+    try {
+      if (section === 'firebase') {
+        localStorage.setItem('gurnaaz_firebase_config', JSON.stringify(firebase));
+        // Dispatch event so other parts of the app know Firebase config updated
+        window.dispatchEvent(new CustomEvent('gurnaaz-firebase-updated'));
+      } else if (section === 'branding' || section === 'contact') {
+        localStorage.setItem('gurnaaz_general_config', JSON.stringify(general));
+      }
+    } catch (e) {
+      console.error('Error saving settings to localStorage:', e);
+    }
+    setSavedSection(section);
+    setTimeout(() => setSavedSection(null), 2200);
+  };
+
   const togglePass = (key) => setShowPasswords(prev => ({ ...prev, [key]: !prev[key] }));
   const handleLogo = (e) => { const f = e.target.files[0]; if (f) setLogoPreview(URL.createObjectURL(f)); };
 

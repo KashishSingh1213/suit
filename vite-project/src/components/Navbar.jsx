@@ -2,27 +2,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Search, User, ShoppingBag, X, Trash2, Plus, Minus, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import gurnaazLogo from '../assets/gurnaaz.png';
+import { getAllProducts } from '../utils/adminStore';
 
-const allProductsLookup = [
-  { id: 't1', name: 'Embroidered Silk Suit Set', price: '₹4,299', image: '/designer_suit_1.png', boutique: 'Kala Mandir' },
-  { id: 't2', name: 'Chanderi Salwar Suit Set', price: '₹3,899', image: '/cotton_suit.png', boutique: 'Zari Heritage' },
-  { id: 't3', name: 'Designer Angrakha Suit Set', price: '₹5,499', image: '/sharara_suit.png', boutique: 'Gulabo Jaipur' },
-  { id: 't4', name: 'Pakistani Straight Suit Set', price: '₹4,799', image: '/pakistani_suit.png', boutique: 'Nazraana' },
-  { id: 'n1', name: 'Floral Silk Anarkali Suit', price: '₹6,899', image: '/anarkali_suit.png', boutique: 'Silk Weaver' },
-  { id: 'n2', name: 'Classic Georgette Suit Set', price: '₹3,299', image: '/designer_suit_1.png', boutique: 'Poshak' },
-  { id: 'n3', name: 'Glacier Blue Organza Suit Set', price: '₹14,500', image: '/sky_blue_suit.jpg', boutique: 'Punjabi Couture' },
-  { id: 'n4', name: 'Organza Dupatta Suit Set', price: '₹5,199', image: '/chikankari_suit.png', boutique: 'Rivaaz' },
-  { id: 'b1', name: 'Velvet Embroidered Suit Set', price: '₹8,999', image: '/banarasi_suit.png', boutique: 'Vastra' },
-  { id: 'b2', name: 'Chikankari Handloom Suit Set', price: '₹7,499', image: '/chikankari_suit.png', boutique: 'Awadh Kraft' },
-  { id: 'b3', name: 'Banarasi Brocade Suit Set', price: '₹9,299', image: '/banarasi_suit.png', boutique: 'Kashi Fabrics' },
-  { id: 'b4', name: 'Gota Patti Sharara Suit Set', price: '₹4,999', image: '/sharara_suit.png', boutique: 'Shagun Jaipur' },
-  { id: 'f1', name: 'Royal Sharara Suit Set', price: '₹11,499', image: '/sharara_suit.png', boutique: 'Rajputana' },
-  { id: 'f2', name: 'Handcrafted Palazzo Suit Set', price: '₹8,299', image: '/pakistani_suit.png', boutique: 'Gulabi Dhaaga' },
-  { id: 'f3', name: 'Raw Silk Anarkali Suit Set', price: '₹13,999', image: '/anarkali_suit.png', boutique: 'Royal Heritage' },
-  { id: 'f4', name: 'Heavy Zardozi Salwar Suit Set', price: '₹12,499', image: '/designer_suit_1.png', boutique: 'Lakhnavi Shaan' },
-];
-
-export default function Navbar({ cart = [], removeFromCart, updateCartQty, favorites = {}, toggleFavorite, addToCart, setView, user, handleLogout }) {
+export default function Navbar({ cart = [], removeFromCart, updateCartQty, favorites = {}, toggleFavorite, addToCart, setView, setSelectedCategory, setSelectedProduct, user, handleLogout }) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -32,6 +14,16 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [orderId, setOrderId] = useState('');
   const [timeLeft, setTimeLeft] = useState({ hours: 1, minutes: 24, seconds: 53 });
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    setAllProducts(getAllProducts());
+    const handleUpdate = () => {
+      setAllProducts(getAllProducts());
+    };
+    window.addEventListener('admin-data-updated', handleUpdate);
+    return () => window.removeEventListener('admin-data-updated', handleUpdate);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -51,9 +43,9 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
     return () => clearInterval(timer);
   }, []);
 
-  const suggestions = ['Anarkali', 'Sharara', 'Banarasi Silk', 'Chikankari', 'Zardozi'];
+  const suggestions = ['Anarkali', 'Sharara', 'Banarasi', 'Chikankari', 'Patiala', 'Pakistani'];
   const cartItemCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const favoriteItems = allProductsLookup.filter((p) => favorites[p.id]);
+  const favoriteItems = allProducts.filter((p) => favorites[p.id]);
   const favoriteCount = favoriteItems.length;
 
   const getSubtotal = () => cart.reduce((total, item) => {
@@ -62,10 +54,8 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
   }, 0);
 
   const handleCheckout = () => {
-    const randomId = 'GN-' + Math.floor(100000 + Math.random() * 900000);
-    setOrderId(randomId);
     setCartOpen(false);
-    setCheckoutOpen(true);
+    setView('checkout');
   };
 
   return (
@@ -76,7 +66,7 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
       className="fixed top-0 left-0 right-0 z-50"
     >
       {/* Announcement Bar */}
-      <div className="bg-[#FAF9F6] text-[#111111] py-2 px-6 text-center text-[9px] sm:text-[10px] tracking-[0.22em] font-semibold flex items-center justify-center gap-4 uppercase">
+      <div className="bg-[#FAF9F6] text-[#111111] py-1.5 sm:py-2 px-4 text-center text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.22em] font-semibold flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-4 uppercase">
         <span>End of Season Sale · Extra 15% Off · Code: SUITE15</span>
         <div className="flex items-center gap-1 font-mono bg-black/20 px-2.5 py-0.5 rounded text-[#BCA58A] font-bold text-[10px]">
           <span>{String(timeLeft.hours).padStart(2, '0')}</span>:
@@ -98,16 +88,41 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
               <img src={gurnaazLogo} alt="GURNAAZ" className="h-12 md:h-14 w-auto object-contain" />
             </motion.a>
 
-            {/* Center Nav Links */}
             <div className="hidden md:flex items-center gap-10">
               {['HOME', 'SHOP', 'COLLECTIONS', 'BOUTIQUES', 'ABOUT US'].map((item, i) => (
-                <a key={i} href="#" onClick={(e) => { e.preventDefault(); setView('home'); }}
-                  className="relative text-[11px] tracking-[0.18em] text-[#111111]/70 hover:text-[#111111] transition-colors duration-300 py-2 group"
-                  style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
-                >
-                  {item}
-                  <span className="absolute bottom-0 left-0 w-0 h-px bg-[#BCA58A] transition-all duration-400 group-hover:w-full" />
-                </a>
+                <div key={i} className="relative group py-2">
+                  <a href="#" onClick={(e) => { 
+                    e.preventDefault(); 
+                    if (item === 'HOME') setView('home');
+                    if (item === 'COLLECTIONS') { setSelectedCategory('Anarkali'); setView('category'); } 
+                  }}
+                    className="relative text-[11px] tracking-[0.18em] text-[#111111]/70 hover:text-[#111111] group-hover:text-[#111111] transition-colors duration-300 uppercase py-2"
+                    style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}
+                  >
+                    {item}
+                    <span className="absolute bottom-0 left-0 w-0 h-px bg-[#BCA58A] transition-all duration-400 group-hover:w-full" />
+                  </a>
+
+                  {item === 'SHOP' && (
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-[#FAF9F6] border border-[#BCA58A]/15 shadow-2xl py-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300 z-50 rounded">
+                      {['Anarkali', 'Sharara', 'Patiala', 'Pakistani', 'Chikankari', 'Banarasi'].map((cat) => (
+                        <a
+                          key={cat}
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setSelectedCategory(cat);
+                            setView('category');
+                          }}
+                          className="block px-6 py-2.5 text-[10px] tracking-widest uppercase text-[#111111]/70 hover:text-[#BCA58A] hover:bg-[#E8DDD0]/20 transition-all font-semibold"
+                          style={{ fontFamily: "'DM Sans', sans-serif" }}
+                        >
+                          {cat} Suits
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
 
@@ -206,6 +221,44 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
                       </button>
                     ))}
                   </div>
+
+                  {/* Search Results Preview */}
+                  {searchQuery.trim().length > 0 && (
+                    <div className="mt-4 max-h-[300px] overflow-y-auto border border-[#BCA58A]/15 bg-white divide-y divide-[#BCA58A]/10 shadow-lg">
+                      {allProducts
+                        .filter(p => 
+                          p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (p.type || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (p.boutique || '').toLowerCase().includes(searchQuery.toLowerCase())
+                        )
+                        .slice(0, 5)
+                        .map(p => (
+                          <div 
+                            key={p.id} 
+                            onClick={() => {
+                              setSelectedProduct(p);
+                              setView('product-details');
+                              setSearchOpen(false);
+                              setSearchQuery('');
+                            }}
+                            className="flex items-center gap-4 p-3 hover:bg-[#E8DDD0]/10 cursor-pointer transition-all text-left animate-fadeIn"
+                          >
+                            <img src={p.image} alt={p.name} className="w-10 h-12 object-cover object-top border border-[#BCA58A]/10" />
+                            <div>
+                              <p className="text-xs font-semibold text-[#111111]">{p.name}</p>
+                              <p className="text-[10px] text-[#BCA58A] font-semibold mt-0.5">{p.boutique} · {p.price}</p>
+                            </div>
+                          </div>
+                        ))}
+                      {allProducts.filter(p => 
+                        p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                        (p.type || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        (p.boutique || '').toLowerCase().includes(searchQuery.toLowerCase())
+                      ).length === 0 && (
+                        <p className="text-xs text-[#6B6B6B] p-4 text-center">No products found matching "{searchQuery}"</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -221,10 +274,35 @@ export default function Navbar({ cart = [], removeFromCart, updateCartQty, favor
                   <span className="text-lg tracking-[0.2em] text-[#111111]" style={{ fontFamily: "'Cormorant Garamond', serif", fontStyle: 'italic' }}>MENU</span>
                   <button onClick={() => setIsOpen(false)} className="text-[#6B6B6B] hover:text-[#111111] cursor-pointer"><X size={20} /></button>
                 </div>
-                <div className="flex flex-col gap-5">
-                  {['HOME', 'SHOP', 'COLLECTIONS', 'BOUTIQUES', 'ABOUT US'].map((item, i) => (
-                    <a key={i} href="#" onClick={() => setIsOpen(false)}
-                      className="text-[11px] tracking-[0.2em] text-[#111111]/60 hover:text-[#BCA58A] transition-colors py-1 border-b border-[#BCA58A]/10">
+                <div className="flex flex-col gap-5 text-left">
+                  <a href="#" onClick={(e) => { e.preventDefault(); setView('home'); setIsOpen(false); }}
+                    className="text-[11px] tracking-[0.2em] text-[#111111]/60 hover:text-[#BCA58A] transition-colors py-1 border-b border-[#BCA58A]/10 uppercase font-semibold">
+                    HOME
+                  </a>
+                  <div className="space-y-2">
+                    <span className="text-[11px] tracking-[0.2em] text-[#111111]/40 uppercase font-bold block">SHOP CATEGORIES</span>
+                    <div className="pl-4 flex flex-col gap-3">
+                      {['Anarkali', 'Sharara', 'Patiala', 'Pakistani', 'Chikankari', 'Banarasi'].map((cat) => (
+                        <a key={cat} href="#" onClick={(e) => {
+                          e.preventDefault();
+                          setSelectedCategory(cat);
+                          setView('category');
+                          setIsOpen(false);
+                        }}
+                          className="text-[10px] tracking-[0.2em] text-[#111111]/60 hover:text-[#BCA58A] transition-colors uppercase font-medium">
+                          {cat} Suits
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                  {['COLLECTIONS', 'BOUTIQUES', 'ABOUT US'].map((item, i) => (
+                    <a key={i} href="#" onClick={(e) => {
+                      e.preventDefault();
+                      if (item === 'COLLECTIONS') { setSelectedCategory('Anarkali'); setView('category'); }
+                      else { setView('home'); }
+                      setIsOpen(false);
+                    }}
+                      className="text-[11px] tracking-[0.2em] text-[#111111]/60 hover:text-[#BCA58A] transition-colors py-1 border-b border-[#BCA58A]/10 uppercase font-semibold">
                       {item}
                     </a>
                   ))}
